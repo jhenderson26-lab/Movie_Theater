@@ -1,6 +1,7 @@
 package org.example.movie_theater.Controllers;
 
 import ch.qos.logback.core.model.Model;
+//import org.springframework.ui.Model;
 import org.apache.catalina.connector.Response;
 import org.example.movie_theater.Entities.Movie;
 import org.example.movie_theater.Entities.Room;
@@ -73,6 +74,13 @@ public class Controller {
     @GetMapping("/movies/search")
     public ResponseEntity<List<Movie>> searchMovies(@RequestParam String title) {
         return ResponseEntity.ok(movieService.findMoviesByTitle(title));
+    }
+
+    @GetMapping("/AllMovies")
+    public String getAllMovies() {
+//        Iterable<Movie> movies = movieService.getAllMovies();
+//        model.addAttribute("Movielist", movies);
+        return "Movie/AllMovies";
     }
 
     // get all saved tickets
