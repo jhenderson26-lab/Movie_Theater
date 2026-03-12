@@ -43,6 +43,6 @@ public class MovieService {
     }
 
     public void deleteMovie(Long id) {
-        movieRepo.deleteById(id);
+        movieRepository.deleteById(id);
     }
 }

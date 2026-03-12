@@ -25,8 +25,8 @@ public class Movie {
     @Setter
     private String title;
 
-    @Setter
     @Getter
+    @Setter
     private LocalDate releaseYear;
 
     @Setter
