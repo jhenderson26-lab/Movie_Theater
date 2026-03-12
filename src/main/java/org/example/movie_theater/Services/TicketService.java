@@ -8,6 +8,8 @@ import org.example.movie_theater.Repos.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TicketService {
     @Autowired private TicketRepository ticketRepo;
@@ -31,5 +33,9 @@ public class TicketService {
         ticket.setCost(seat.getRoom().getRoomCost());
 
         return ticketRepo.save(ticket);
+    }
+
+    public List<Ticket> getAllTickets() {
+        return ticketRepo.findAll();
     }
 }

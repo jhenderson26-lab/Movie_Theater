@@ -2,8 +2,11 @@ package org.example.movie_theater.Controllers;
 
 import ch.qos.logback.core.model.Model;
 import org.apache.catalina.connector.Response;
+import org.example.movie_theater.Entities.Movie;
 import org.example.movie_theater.Entities.Room;
 import org.example.movie_theater.Entities.Seat;
+import org.example.movie_theater.Entities.Ticket;
+import org.example.movie_theater.Repos.MovieRepository;
 import org.example.movie_theater.Services.MovieService;
 import org.example.movie_theater.Services.RoomService;
 import org.example.movie_theater.Services.TicketService;
@@ -26,20 +29,22 @@ public class Controller {
 
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private MovieRepository movieRepository;
 
     public Controller(MovieService movieService) {
         this.movieService = movieService;
     }
 
     // homepage mapping
-    @GetMapping("/")
+    @GetMapping("/rooms")
     public List<Room> Homepage(Model model) {
         return roomService.getAllRooms();
     }
 
     // show all seats in a specified room
     // when a room is clicked on in the room list
-    @GetMapping("/{roomId}/seats")
+    @GetMapping("/rooms/{roomId}/seats")
     public List<Seat> RoomSeats(Model model, @PathVariable String roomId) {
         long idL;
         try {
@@ -49,5 +54,30 @@ public class Controller {
             return List.of();
         }
         return roomService.getSeatsByRoomId(idL);
+    }
+
+    // post for booking a seat by ID
+    @PostMapping("tickets/book/{seatId}")
+    public ResponseEntity<Ticket> bookTicket(@PathVariable String seatId) {
+        long idL;
+        try {
+            idL = Long.parseLong(seatId);
+        } catch (NumberFormatException e) {
+            System.out.println("ERROR: '" + seatId + "' is not a valid ID.");
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(ticketService.createTicketForSeat(idL));
+    }
+
+    // find movie by id
+    @GetMapping("/movies/search")
+    public ResponseEntity<List<Movie>> searchMovies(@RequestParam String title) {
+        return ResponseEntity.ok(movieService.findMoviesByTitle(title));
+    }
+
+    // get all saved tickets
+    @GetMapping("/tickets")
+    public List<Ticket> getAllTickets() {
+        return ticketService.getAllTickets();
     }
 }
