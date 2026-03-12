@@ -1,7 +1,10 @@
-package org.example.movie_theater.Movie;
+package org.example.movie_theater.Entities;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table
@@ -18,18 +21,30 @@ public class Movie {
     )
     private Long id;
 
+    @Getter
+    @Setter
     private String title;
 
+    @Setter
+    @Getter
     private LocalDate releaseYear;
 
+    @Setter
+    @Getter
     private String genre;
 
+    @Setter
+    @Getter
     private String description;
 
+    @Setter
+    @Getter
     private Float cost;
 
-    public Movie() {
-    }
+    @ManyToMany(mappedBy = "movies")
+    private List<Room> rooms;
+
+    public Movie() {}
 
     public Movie(Long id, String title, LocalDate releaseYear, String genre, String description, Float cost) {
         this.id = id;
@@ -45,54 +60,6 @@ public class Movie {
         this.releaseYear = releaseYear;
         this.genre = genre;
         this.description = description;
-        this.cost = cost;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public LocalDate getReleaseYear() {
-        return releaseYear;
-    }
-
-    public void setReleaseYear(LocalDate releaseYear) {
-        this.releaseYear = releaseYear;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Float getCost() {
-        return cost;
-    }
-
-    public void setCost(Float cost) {
         this.cost = cost;
     }
 

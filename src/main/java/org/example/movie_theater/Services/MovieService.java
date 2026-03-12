@@ -1,5 +1,7 @@
-package org.example.movie_theater.Movie;
+package org.example.movie_theater.Services;
 
+import org.example.movie_theater.Entities.Movie;
+import org.example.movie_theater.Repos.MovieRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
