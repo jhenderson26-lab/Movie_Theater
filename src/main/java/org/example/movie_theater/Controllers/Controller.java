@@ -29,8 +29,8 @@ public class Controller {
 
     @Autowired
     private RoomService roomService;
-    @Autowired
-    private MovieRepository movieRepository;
+ //   @Autowired
+   // private MovieRepository movieRepository;
 
     public Controller(MovieService movieService) {
         this.movieService = movieService;
