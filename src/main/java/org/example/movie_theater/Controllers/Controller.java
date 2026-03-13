@@ -76,16 +76,11 @@ public class Controller {
         return ResponseEntity.ok(movieService.findMoviesByTitle(title));
     }
 
-    @GetMapping("/AllMovies")
-    public String getAllMovies() {
-//        Iterable<Movie> movies = movieService.getAllMovies();
-//        model.addAttribute("Movielist", movies);
-        return "Movie/AllMovies";
-    }
-
     // get all saved tickets
     @GetMapping("/tickets")
     public List<Ticket> getAllTickets() {
         return ticketService.getAllTickets();
     }
+
+
 }

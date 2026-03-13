@@ -55,27 +55,30 @@
 
 /* Image Frames */
 .image-stack {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: right;
     position: relative;
+    width: min-content;
 }
 
 .small-frame {
-    width: 250px;
-    height: 180px;
+    display: flex;
+    justify-content: right;
+    height: 290px;
     margin-left: 100px;
     overflow: hidden;
-    border: 1px solid #333;
+
 }
 
 .large-frame {
-    width: 450px;
+    width: min-content;
     height: 300px;
-    margin-top: 20px;
     overflow: hidden;
     border: 1px solid #333;
 }
 
 .theater-pic, .seats-pic {
-    width: 100%;
     height: 100%;
     object-fit: cover;
 }
