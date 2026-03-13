@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Movie Theater</title>
+</head>
+    <body>
+    <header class="main-header">
+        <div class="logo-box">
+            <img src="Images/RedTicketLogo.png" alt="RedTicket Logo" class="logo-img")/>
+        </div>
+        <nav class="nav-bar">
+            <form action="/" class="nav-form">
+                <button type="submit" class="nav-btn">Home</button>
+            </form>
+            <form action="#" class="nav-form">
+                <button type="submit" class="nav-btn">Ticket History</button>
+            </form>
+            <form action="/AllMovies" class="nav-form">
+                <button type="submit" class="nav-btn">Movies</button>
+            </form>
+            <form action="/Rooms" class="nav-form">
+                <button type="submit" class="nav-btn">Rooms</button>
+            </form>
+        </nav>
+    </header>
+    <div class="rooms-container">
+        <h1 class="title">ROOMS:</h1>
+
+        <div class="grid-wrapper">
+            <!-- Loop through each room -->
+            <div th:each="room : ${Roomlist}" class="room-card-wrapper">
+
+                <!-- The clickable area for the whole card -->
+                <a th:href="@{/rooms/{id}/seats(id=${room.id})}" class="room-card-link">
+                    <div class="room-card">
+
+                        <!-- Action Icons (Keep these separate if they need different clicks) -->
+                        <div class="card-actions">
+                            <span class="icon">📝</span>
+                            <span class="icon">✖</span>
+                        </div>
+
+                        <div class="card-content">
+                            <h2 th:text="'Room: ' + ${room.roomNumber}">Room: #</h2>
+                            <div th:each="movie : ${room.movies}">
+                                <p class="movie-name" th:text="${movie.title}">Movie Name</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+
+    </body>
+</html>

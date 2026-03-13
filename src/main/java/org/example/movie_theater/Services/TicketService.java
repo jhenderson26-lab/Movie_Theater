@@ -30,7 +30,10 @@ public class TicketService {
         Ticket ticket = new Ticket();
         ticket.setSeat(seat);
 
-        ticket.setCost(seat.getRoom().getRoomCost());
+        // get first from movies list for now,
+        // in the future movies should have show times
+        // which will determine what movie is used in the price calc
+        ticket.setCost(seat.getRoom().getMovies().getFirst().getCost());
 
         return ticketRepo.save(ticket);
     }

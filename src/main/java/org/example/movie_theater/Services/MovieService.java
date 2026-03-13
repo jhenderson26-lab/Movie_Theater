@@ -26,6 +26,13 @@ public class MovieService {
         return movieRepository.findByTitleIsWithinIgnoreCase(title);
     }
 
+    public Movie findMovieById(Long id) {
+        if (movieRepository.findById(id).isPresent()) {
+            return movieRepository.findById(id).get();
+        }
+        return null;
+    }
+
     public Movie saveMovie(Movie movie) {
         return movieRepository.save(movie);
     }

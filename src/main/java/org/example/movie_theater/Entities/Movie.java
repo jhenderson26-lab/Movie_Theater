@@ -9,6 +9,8 @@ import java.util.List;
 @Entity
 @Table
 public class Movie {
+    @Getter
+    @Setter
     @Id
     @SequenceGenerator(
             name = "movie_sequence",
@@ -39,28 +41,40 @@ public class Movie {
 
     @Setter
     @Getter
-    private Float cost;
+    private Double cost;
+
+    @Setter
+    @Getter
+    private Integer show_time_minute;
+
+    @Setter
+    @Getter
+    private Integer show_time_hour;
 
     @ManyToMany(mappedBy = "movies")
     private List<Room> rooms;
 
     public Movie() {}
 
-    public Movie(Long id, String title, LocalDate releaseYear, String genre, String description, Float cost) {
+    public Movie(Long id, String title, LocalDate releaseYear, String genre, String description, Double cost, Integer show_time_minute, Integer show_time_hour) {
         this.id = id;
         this.title = title;
         this.releaseYear = releaseYear;
         this.genre = genre;
         this.description = description;
         this.cost = cost;
+        this.show_time_minute = show_time_minute;
+        this.show_time_hour = show_time_hour;
     }
 
-    public Movie(String title, LocalDate releaseYear, String genre, String description, Float cost) {
+    public Movie(String title, LocalDate releaseYear, String genre, String description, Double cost, Integer show_time_minute, Integer show_time_hour) {
         this.title = title;
         this.releaseYear = releaseYear;
         this.genre = genre;
         this.description = description;
         this.cost = cost;
+        this.show_time_minute = show_time_minute;
+        this.show_time_hour = show_time_hour;
     }
 
     @Override
@@ -71,7 +85,9 @@ public class Movie {
                 ", releaseYear=" + releaseYear +
                 ", genre='" + genre + '\'' +
                 ", description='" + description + '\'' +
-                ", cost=" + cost +
+                ", cost='" + cost +
+                ", show_time_minute='" + show_time_minute + '\''+
+                ", show_time_hour='" + show_time_hour + '\''+
                 '}';
     }
 }

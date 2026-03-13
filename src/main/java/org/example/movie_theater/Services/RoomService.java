@@ -27,6 +27,7 @@ public class RoomService {
         return seatRepository.findByRoomId(roomId);
     }
 
+
     public Room createRoom(Room room) {
         Room savedRoom = roomRepository.save(room);
         populateRoomWithSeats(savedRoom);

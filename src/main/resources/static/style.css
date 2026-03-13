@@ -13,6 +13,7 @@
     align-items: center;
     padding: 15px 40px;
     border-bottom: 2px solid #a00000;
+    background-color: black;
 }
 
 .nav-bar {
@@ -112,5 +113,70 @@
     line-height: 1.8;
     font-size: 15px;
     color: #e0e0e0;
+}
+
+.title {
+    text-align: center;
+    font-size: 3rem;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+}
+
+.grid-wrapper {
+    display: grid;
+    /* Creates 3 columns that adjust to screen size */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.room-card {
+    background-color: #b30000; /* Deep red color */
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.card-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+}
+
+.movie-name {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-top: 5px;
+}
+
+/* Remove default link styling */
+.room-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block; /* Makes the whole area clickable */
+    transition: transform 0.2s ease;
+}
+
+/* Optional: Add a hover effect so users know it's clickable */
+.room-card-link:hover {
+    transform: scale(1.03);
+    filter: brightness(1.1);
+}
+
+.room-card {
+    cursor: pointer;
+    background-color: #b30000;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    /* ... rest of your card styles ... */
 }
 

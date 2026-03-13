@@ -1,12 +1,80 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="stylesheet" th:href="@{/style.css}">
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
-    <title>Movie Theater</title>
-</head>
-    <body>
-        <h1>ALL Movie</h1>
+    <title>Movie Theater - Catalog</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
 
-    </body>
+        .movie-container { display: flex; flex-wrap: wrap; gap: 20px; list-style: none; padding: 0; }
+
+        .movie-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            width: 250px;
+            transition: transform 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: #1d1d1f; /* Dark text for readability on glass */
+        }
+
+        .movie-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .movie-title { font-weight: bold; font-size: 1.2em; display: block; color: #764ba2; }
+
+        .showtime-badge {
+            background: #764ba2;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-family: monospace;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .movie-meta { font-size: 0.9em; color: #555; margin-top: 5px; }
+        .movie-price { font-weight: bold; color: #28a745; margin-top: 8px; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments :: navbar}"></div>
+
+<h1 style="text-align: center; margin-top: 40px;">Current Showtimes</h1>
+
+<div class="movie-container">
+    <a th:each="movie : ${Movielist}"
+       th:href="@{/MoviePage/{id}(id=${movie.id})}"
+       class="movie-card">
+
+        <span class="movie-title" th:text="${movie.title}">Movie Title</span>
+
+        <div class="movie-meta">
+            <span th:text="${movie.genre}">Genre</span> |
+            <span th:text="${#temporals.format(movie.releaseYear, 'yyyy')}">2024</span>
+        </div>
+
+        <div class="showtime-badge">
+            <span th:text="${movie.show_time_hour}">12</span>:<span th:text="${#numbers.formatInteger(movie.show_time_minute, 2)}">00</span>
+        </div>
+
+        <p class="movie-price" th:text="'$' + ${#numbers.formatDecimal(movie.cost, 1, 2)}">$0.00</p>
+
+        <small style="color: #764ba2;">Click for details →</small>
+    </a>
+</div>
+
+<div th:if="${#lists.isEmpty(Movielist)}" style="text-align: center;">
+    <p>No movies are currently available.</p>
+</div>
+</body>
 </html>

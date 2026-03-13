@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<header th:fragment="navbar" class="main-header">
+  <div class="logo-box">
+    <img th:src="@{/Images/RedTicketLogo.png}" alt="RedTicket Logo" class="logo-img" />
+  </div>
+  <nav class="nav-bar">
+    <form th:action="@{/}" class="nav-form">
+      <button type="submit" class="nav-btn">Home</button>
+    </form>
+    <form th:action="@{/TicketHistory}" class="nav-form">
+      <button type="submit" class="nav-btn">Ticket History</button>
+    </form>
+    <form th:action="@{/AllMovies}" class="nav-form">
+      <button type="submit" class="nav-btn">Movies</button>
+    </form>
+    <form th:action="@{/Rooms}" class="nav-form">
+      <button type="submit" class="nav-btn">Rooms</button>
+    </form>
+  </nav>
+</header>
+
+</body>
+</html>
