@@ -7,25 +7,8 @@
 </head>
 <body class="body-bg">
 <!-- Header Section -->
-<header class="main-header">
-    <div class="logo-box">
-        <img src="Images/RedTicketLogo.png" alt="RedTicket Logo" class="logo-img")/>
-    </div>
-    <nav class="nav-bar">
-        <form action="/" class="nav-form">
-            <button type="submit" class="nav-btn">Home</button>
-        </form>
-        <form action="#" class="nav-form">
-            <button type="submit" class="nav-btn">About</button>
-        </form>
-        <form th:action="@{/AllMovies}" class="nav-form">
-            <button type="submit" class="nav-btn">Movies</button>
-        </form>
-        <form action="OurRooms" class="nav-form">
-            <button type="submit" class="nav-btn">Rooms</button>
-        </form>
-    </nav>
-</header>
+
+<div th:replace="~{fragments :: navbar}"></div>
 
 <!-- Main Content Area -->
 <main class="main-layout">
@@ -33,10 +16,10 @@
         <h1 class="hero-title">Red Ticket Cinema</h1>
         <div class="image-stack">
             <div class="small-frame">
-                <img src="Images/audience.jpg" class="theater-pic" alt="Audience">
+                <img src="Images/Audience.png" class="theater-pic" alt="Audience">
             </div>
             <div class="large-frame">
-                <img src="Images/seats.jpg" class="seats-pic" alt="Seats">
+                <img src="Images/Seats.png" class="seats-pic" alt="Seats">
             </div>
         </div>
     </section>
@@ -55,5 +38,3 @@
 </main>
 </body>
 </html>
-
-

@@ -1,14 +1,21 @@
 package org.example.movie_theater.Entities;
+
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "movies")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Movie {
+
     @Id
     @SequenceGenerator(
             name = "movie_sequence",
@@ -21,59 +28,33 @@ public class Movie {
     )
     private Long id;
 
-    @Getter
-    @Setter
     private String title;
-
-    @Getter
-    @Setter
     private LocalDate releaseYear;
-
-    @Setter
-    @Getter
     private String genre;
 
-    @Setter
-    @Getter
+    @Column(length = 1000) // Allows for longer synopses
     private String description;
 
-    @Setter
-    @Getter
-    private Float cost;
+    private Double cost;
+    private Integer show_time_minute;
+    private Integer show_time_hour;
 
-    @ManyToMany(mappedBy = "movies")
-    private List<Room> rooms;
+    @ManyToMany
+    @JoinTable(
+            name = "movie_rooms",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "room_id")
+    )
+    private List<Room> rooms = new ArrayList<>();
 
-    public Movie() {}
-
-    public Movie(Long id, String title, LocalDate releaseYear, String genre, String description, Float cost) {
-        this.id = id;
+    // Custom constructor for ease of use in your data loader/seeding
+    public Movie(String title, LocalDate releaseYear, String genre, String description, Double cost, Integer show_time_hour, Integer show_time_minute) {
         this.title = title;
         this.releaseYear = releaseYear;
         this.genre = genre;
         this.description = description;
         this.cost = cost;
-    }
-
-    public Movie(String title, LocalDate releaseYear, String genre, String description, Float cost) {
-        this.title = title;
-        this.releaseYear = releaseYear;
-        this.genre = genre;
-        this.description = description;
-        this.cost = cost;
-    }
-
-    @Override
-    public String toString() {
-        return "Movie{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", releaseYear=" + releaseYear +
-                ", genre='" + genre + '\'' +
-                ", description='" + description + '\'' +
-                ", cost=" + cost +
-                '}';
+        this.show_time_hour = show_time_hour;
+        this.show_time_minute = show_time_minute;
     }
 }
-
-

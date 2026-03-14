@@ -1,37 +1,36 @@
 package org.example.movie_theater.Entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "rooms")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Room {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Setter
     @Getter
-    private String roomNumber;
+    private String name; // e.g., "Theater 1" or "IMAX Screen"
+    private Integer capacity;
 
-    @Setter
-    @Getter
-    private Double roomCost;
+    @ManyToMany(mappedBy = "rooms")
+    private List<Movie> movies = new ArrayList<>();
 
-    @Setter
-    @Getter
-    private Integer maxSeats;
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Seat> seats = new ArrayList<>();
 
-    @ManyToMany @JoinTable(
-        name = "room_movies",
-        joinColumns = @JoinColumn(name = "room_id"),
-        inverseJoinColumns = @JoinColumn(name = "movie_id")
-    )
-    private List<Movie> movies;
-
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    private List<Seat> seats;
+    // Helper constructor
+    public Room(String name, Integer capacity) {
+        this.name = name;
+        this.capacity = capacity;
+    }
 }

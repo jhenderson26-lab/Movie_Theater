@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Movie Theater - Theaters</title>
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="rooms-container">
+    <h1 class="title">Theaters</h1>
+
+    <div class="grid-wrapper">
+        <div th:each="room : ${Roomlist}" class="room-card-wrapper">
+
+            <div class="room-card">
+                <div class="room-info-section">
+                    <a th:href="@{/rooms/{id}/seats(id=${room.id})}" class="room-main-link">
+                        <h2 th:text="'Theater: ' + ${room.getName()}">Theater: #</h2>
+                        <small class="click-hint">View Seats &raquo;</small>
+                    </a>
+                </div>
+
+                <hr class="card-divider">
+
+                <div class="movies-list">
+                    <p class="section-label">Now Playing:</p>
+
+                    <div th:each="movie : ${room.movies}" class="movie-entry">
+                        <a th:href="@{/MoviePage/{id}(id=${movie.id})}" class="movie-page-link">
+                            <p class="movie-name" th:text="${movie.title}">Movie Name</p>
+                            <p class="showtime">
+                                <span th:text="${movie.show_time_hour}">12</span>:<span th:text="${#numbers.formatInteger(movie.show_time_minute, 2)}">00</span>
+                            </p>
+                        </a>
+                    </div>
+
+                    <p th:if="${#lists.isEmpty(room.movies)}" class="no-movies">
+                        No movies scheduled.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <title>Your Cart</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #f2f2f7; padding: 40px; }
+        .cart-card { background: white; border-radius: 20px; padding: 30px; max-width: 800px; margin: auto; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #e5e5ea; }
+        .edit-link { color: #5856D6; text-decoration: none; font-weight: 600; font-size: 0.9em; }
+        .checkout-bar { margin-top: 30px; text-align: right; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="cart-card">
+    <h1>Shopping Cart</h1>
+
+    <div th:if="${#lists.isEmpty(cartItems)}" style="text-align: center; padding: 40px;">
+        <p>Your cart is empty.</p>
+        <a href="/AllMovies" style="color: #007aff;">Go find a movie</a>
+    </div>
+
+    <div th:each="item : ${cartItems}" class="cart-item">
+        <div>
+            <h3 th:text="${item.movie.title}" style="margin: 0;">Movie</h3>
+            <p style="margin: 5px 0; color: #8e8e93;">Seat: <span th:text="${item.seat.seatNumber}">A1</span></p>
+        </div>
+        <div style="text-align: right;">
+            <p th:text="'$' + ${item.cost}" style="font-weight: 700; margin-bottom: 10px;">$0.00</p>
+            <a th:href="@{/EditTicket/{id}(id=${item.id})}" class="edit-link">Edit Seat</a>
+        </div>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(cartItems)}" class="checkout-bar">
+        <button class="apple-btn" style="width: 200px;">Checkout</button>
+    </div>
+</div>
+
+</body>
+</html>

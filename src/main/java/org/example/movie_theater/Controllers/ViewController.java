@@ -1,0 +1,126 @@
+package org.example.movie_theater.Controllers;
+
+import org.example.movie_theater.Entities.*;
+import org.example.movie_theater.Services.*;
+import org.example.movie_theater.User.User;
+import org.example.movie_theater.User.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.List;
+
+@Controller
+public class ViewController {
+
+    private final MovieService movieService;
+    private final RoomService roomService;
+    private final TicketService ticketService;
+    private final UserService userService;
+
+    @Autowired
+    public ViewController(MovieService movieService,
+                          RoomService roomService,
+                          TicketService ticketService,
+                          UserService userService) {
+        this.movieService = movieService;
+        this.roomService = roomService;
+        this.ticketService = ticketService;
+        this.userService = userService;
+    }
+
+
+    @GetMapping("/")
+    public String Homepage() {
+        return "index";
+    }
+
+    @GetMapping("/AllMovies")
+    public String AllMoviesPage(Model model) {
+        model.addAttribute("Movielist", movieService.getAllMovies());
+        return "Movie/AllMovies";
+    }
+
+    @GetMapping("/MoviePage/{movieId}")
+    public String MoviePage(@PathVariable Long movieId, Model model) {
+        Movie selected_movie = movieService.findMovieById(movieId);
+        model.addAttribute("movie", selected_movie);
+        return "Movie/MoviePage";
+    }
+
+    @GetMapping("/Rooms")
+    public String RoomsPage(Model model) {
+        model.addAttribute("Roomlist", roomService.getAllRooms());
+        return "Room";
+    }
+
+
+    @GetMapping("/TicketBooking/{movieId}")
+    public String showSeatSelection(@PathVariable Long movieId, Model model) {
+        Movie movie = movieService.findMovieById(movieId);
+
+        // DEBUG LOGS
+        System.out.println("Checking booking for: " + movie.getTitle());
+        System.out.println("Rooms assigned: " + movie.getRooms().size());
+
+        if (movie.getRooms() == null || movie.getRooms().isEmpty()) {
+            System.out.println("REDIRECTING: No rooms found for this movie.");
+            return "redirect:/AllMovies";
+        }
+
+        List<Seat> seats = movie.getRooms().get(0).getSeats();
+        System.out.println("Seats found in room: " + (seats != null ? seats.size() : 0));
+
+        if (seats == null || seats.isEmpty()) {
+            System.out.println("REDIRECTING: Room has no seats initialized.");
+            return "redirect:/AllMovies";
+        }
+
+        model.addAttribute("movie", movie);
+        model.addAttribute("seats", seats);
+        model.addAttribute("isEditing", false);
+        return "Movie/SeatSelection";
+    }
+
+    @PostMapping("/AddToCart")
+    public String addToCart(@RequestParam Long movieId,
+                            @RequestParam Long seatId,
+                            Principal principal) {
+        // Principal is the logged-in user session
+        User user = userService.findByUsername(principal.getName());
+        Movie movie = movieService.findMovieById(movieId);
+
+        ticketService.createTicketForSeat(seatId, user, movie);
+        return "redirect:/Cart";
+    }
+
+
+    @GetMapping("/Cart")
+    public String viewCart(Model model, Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        List<Ticket> cartItems = ticketService.getCartByUser(user);
+
+        model.addAttribute("cartItems", cartItems);
+        return "Cart";
+    }
+
+    @GetMapping("/EditTicket/{ticketId}")
+    public String editTicket(@PathVariable Long ticketId, Model model) {
+        Ticket ticket = ticketService.findTicketById(ticketId);
+
+        model.addAttribute("movie", ticket.getMovie());
+        model.addAttribute("seats", ticket.getMovie().getRooms().get(0).getSeats());
+        model.addAttribute("existingTicketId", ticketId);
+        model.addAttribute("isEditing", true); // Tells the HTML to use /UpdateTicket action
+        return "Movie/SeatSelection";
+    }
+
+    @PostMapping("/UpdateTicket")
+    public String updateTicket(@RequestParam Long ticketId,
+                               @RequestParam Long newSeatId) {
+        ticketService.updateTicketSeat(ticketId, newSeatId);
+        return "redirect:/Cart";
+    }
+}

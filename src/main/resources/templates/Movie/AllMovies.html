@@ -1,12 +1,153 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
-    <title>Movie Theater</title>
-</head>
-    <body>
-        <h1>Movie Theater</h1>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Today's Showings - RedTicket</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <style>
+        /* Apple-Style Glassmorphism Theme */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f2f2f7;
+            margin: 0;
+            padding: 20px;
+            color: #1c1c1e;
+        }
 
-    </body>
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        /* Movie Grid Layout */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+
+        /* Glassmorphism Card */
+        .movie-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 24px;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .movie-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .movie-genre {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #8e8e93;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .movie-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            color: #000;
+        }
+
+        .movie-details {
+            font-size: 0.9rem;
+            color: #3a3a3c;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        /* Action Buttons */
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .price-tag {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .view-btn {
+            background-color: #5856D6; /* iOS Purple */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+        }
+
+        .view-btn:hover {
+            background-color: #434190;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 100px;
+            color: #8e8e93;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container">
+    <h1 class="header-title">Today's Showings</h1>
+
+    <div th:if="${not #lists.isEmpty(Movielist)}" class="movie-grid">
+        <div th:each="movie : ${Movielist}" class="movie-card">
+            <div class="card-content">
+                <div class="movie-genre" th:text="${movie.genre}">GENRE</div>
+                <h2 class="movie-title" th:text="${movie.title}">Movie Title</h2>
+                <p class="movie-details" th:text="${movie.description}">
+                    A short description of the film goes here to give users a preview.
+                </p>
+            </div>
+
+            <div class="card-footer">
+                <span class="price-tag" th:text="'$' + ${#numbers.formatDecimal(movie.cost, 1, 2)}">$0.00</span>
+                <a th:href="@{/MoviePage/{id}(id=${movie.id})}" class="view-btn">View Details</a>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(Movielist)}" class="empty-state">
+        <p>There are no movies currently scheduled. Check back later!</p>
+    </div>
+</div>
+
+</body>
 </html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <title>Select Your Seat</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #f2f2f7; text-align: center; padding-top: 50px; }
+        .theater-container { max-width: 600px; margin: auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .screen { background: #d1d1d6; height: 6px; width: 80%; margin: 20px auto 40px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .seat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; justify-items: center; }
+
+        .seat-radio { display: none; }
+        .seat-label {
+            width: 50px; height: 50px; background: #e5e5ea; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-weight: 600; transition: 0.2s;
+        }
+        .seat-radio:checked + .seat-label { background: #5856D6; color: white; transform: scale(1.1); }
+        .seat-label.occupied { background: #ff3b30; color: white; cursor: not-allowed; opacity: 0.6; }
+
+        .confirm-btn {
+            margin-top: 40px; width: 100%; border: none; background: #5856D6;
+            color: white; padding: 15px; border-radius: 14px; font-weight: 600; font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="theater-container">
+    <h2 th:text="${isEditing} ? 'Change Seat: ' + ${movie.title} : 'Choose Seat: ' + ${movie.title}"></h2>
+    <div class="screen"></div>
+    <p style="color: #8e8e93; font-size: 0.8em; letter-spacing: 2px; margin-bottom: 30px;">SCREEN</p>
+
+    <form th:action="${isEditing} ? @{/UpdateTicket} : @{/AddToCart}" method="post">
+        <input type="hidden" name="movieId" th:value="${movie.id}" th:if="${!isEditing}">
+        <input type="hidden" name="ticketId" th:value="${existingTicketId}" th:if="${isEditing}">
+
+        <div class="seat-grid">
+            <div th:each="seat : ${seats}">
+                <input type="radio" th:id="${'seat-' + seat.id}"
+                       th:name="${isEditing} ? 'newSeatId' : 'seatId'"
+                       th:value="${seat.id}"
+                       class="seat-radio"
+                       th:disabled="${seat.isOccupied}">
+
+                <label th:for="${'seat-' + seat.id}"
+                       class="seat-label"
+                       th:classappend="${seat.isOccupied} ? 'occupied' : ''"
+                       th:text="${seat.seatNumber}">
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="confirm-btn"
+                th:text="${isEditing} ? 'Confirm Change' : 'Add to Cart'">
+        </button>
+    </form>
+</div>
+</body>
+</html>
