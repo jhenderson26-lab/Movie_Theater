@@ -63,7 +63,14 @@ public class ViewController {
 
     @GetMapping("rooms/{id}/seats")
     public String getRoomSeats(@PathVariable("id") Long roomId, Model model) {
-        roomService.getSeatsByRoomId(roomId);
+        Room TheRoom = roomService.GettingRoom(roomId);
+        roomService.populateRoomWithSeats(TheRoom);
+
+        Long amount = roomService.seatsAmounts(roomId);
+        model.addAttribute("seatCount", amount);
+
+        List<Seat> seats = roomService.getSeatsByRoomId(roomId);
+        model.addAttribute("RoomSeats", seats);
         return "Seats";
     }
 

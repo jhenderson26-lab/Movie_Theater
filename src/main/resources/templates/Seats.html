@@ -5,7 +5,18 @@
     <link rel="stylesheet" href="style.css">
     <title>Movie Theater</title>
 </head>
-    <body>
-        <h1>Room #</h1>
-    </body>
+<body>
+<h1>Room Details</h1>
+
+<!-- Thymeleaf will replace the text inside the span with the seatCount value -->
+<p>Total seats in this room: <span th:text="${seatCount}">0</span></p>
+<div th:each="seat : ${RoomSeats}">
+    <div th:text="${seat.seatNumber}"
+         th:style="${seat.isTaken} ? 'background-color: green; color: white;' : 'background-color: red; color: white;'"
+         style="padding: 10px; margin: 5px; display: inline-block; border-radius: 5px;">
+        <!-- Seat number appears here -->
+    </div>
+</div>
+
+</body>
 </html>

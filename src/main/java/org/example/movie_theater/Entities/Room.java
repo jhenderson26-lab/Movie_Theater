@@ -11,6 +11,7 @@ import java.util.Map;
 @Table
 public class Room {
     @Id
+    @Getter
     @GeneratedValue
     private Long id;
 
@@ -44,6 +45,7 @@ public class Room {
 
     }
     public Room(Long id, String roomNumber, Integer maxSeats, List<Movie> movies){
+        this.id = id;
         this.roomNumber = roomNumber;
         this.maxSeats = maxSeats;
         this.movies = movies;
