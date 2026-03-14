@@ -18,20 +18,16 @@ public class Seat {
     private Long id;
 
     @Column(nullable = false)
-    private String seatNumber; // e.g., "A1", "B5"
+    private String seatNumber;
 
     @Setter
     @Column(nullable = false)
     private boolean isOccupied = false;
 
-    /**
-     * Many seats belong to one room.
-     */
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
 
-    // Helper constructor for seeding data
     public Seat(String seatNumber, Room room) {
         this.seatNumber = seatNumber;
         this.room = room;

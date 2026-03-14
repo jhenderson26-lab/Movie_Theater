@@ -32,7 +32,7 @@ public class Movie {
     private LocalDate releaseYear;
     private String genre;
 
-    @Column(length = 1000) // Allows for longer synopses
+    @Column(length = 1000)
     private String description;
 
     private Double cost;
@@ -47,7 +47,6 @@ public class Movie {
     )
     private List<Room> rooms = new ArrayList<>();
 
-    // Custom constructor for ease of use in your data loader/seeding
     public Movie(String title, LocalDate releaseYear, String genre, String description, Double cost, Integer show_time_hour, Integer show_time_minute) {
         this.title = title;
         this.releaseYear = releaseYear;

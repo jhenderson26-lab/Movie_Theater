@@ -19,7 +19,7 @@ public class Room {
 
     @Setter
     @Getter
-    private String name; // e.g., "Theater 1" or "IMAX Screen"
+    private String name;
     private Integer capacity;
 
     @ManyToMany(mappedBy = "rooms")
@@ -28,7 +28,6 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Seat> seats = new ArrayList<>();
 
-    // Helper constructor
     public Room(String name, Integer capacity) {
         this.name = name;
         this.capacity = capacity;

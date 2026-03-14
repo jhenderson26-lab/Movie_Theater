@@ -14,7 +14,6 @@ import java.util.List;
 
 @Controller
 public class ViewController {
-
     private final MovieService movieService;
     private final RoomService roomService;
     private final TicketService ticketService;
@@ -31,6 +30,7 @@ public class ViewController {
         this.userService = userService;
     }
 
+    // basic navigation endpoints
 
     @GetMapping("/")
     public String Homepage() {
@@ -57,21 +57,23 @@ public class ViewController {
     }
 
 
+    // ticket related endpoints
+
     @GetMapping("/TicketBooking/{movieId}")
     public String showSeatSelection(@PathVariable Long movieId, Model model) {
         Movie movie = movieService.findMovieById(movieId);
-
-        // DEBUG LOGS
-        System.out.println("Checking booking for: " + movie.getTitle());
-        System.out.println("Rooms assigned: " + movie.getRooms().size());
+        // debug
+        System.out.println(movie.getTitle());
+        System.out.println(movie.getRooms().size());
 
         if (movie.getRooms() == null || movie.getRooms().isEmpty()) {
             System.out.println("REDIRECTING: No rooms found for this movie.");
             return "redirect:/AllMovies";
         }
 
-        List<Seat> seats = movie.getRooms().get(0).getSeats();
-        System.out.println("Seats found in room: " + (seats != null ? seats.size() : 0));
+        List<Seat> seats = movie.getRooms().getFirst().getSeats();
+        // debug
+        System.out.println((seats != null ? seats.size() : 0));
 
         if (seats == null || seats.isEmpty()) {
             System.out.println("REDIRECTING: Room has no seats initialized.");
@@ -88,7 +90,7 @@ public class ViewController {
     public String addToCart(@RequestParam Long movieId,
                             @RequestParam Long seatId,
                             Principal principal) {
-        // Principal is the logged-in user session
+        // principal is the logged-in user session
         User user = userService.findByUsername(principal.getName());
         Movie movie = movieService.findMovieById(movieId);
 
@@ -111,9 +113,9 @@ public class ViewController {
         Ticket ticket = ticketService.findTicketById(ticketId);
 
         model.addAttribute("movie", ticket.getMovie());
-        model.addAttribute("seats", ticket.getMovie().getRooms().get(0).getSeats());
+        model.addAttribute("seats", ticket.getMovie().getRooms().getFirst().getSeats());
         model.addAttribute("existingTicketId", ticketId);
-        model.addAttribute("isEditing", true); // Tells the HTML to use /UpdateTicket action
+        model.addAttribute("isEditing", true);
         return "Movie/SeatSelection";
     }
 

@@ -22,6 +22,7 @@ public class TheaterConfig {
             Room theater1 = new Room("Theater 1", 20);
             roomRepo.save(theater1);
 
+            // replace with call to roomService
             for (int i = 0; i < 4; i++) {
                 char row = (char) ('A' + i);
                 for (int j = 1; j <= 5; j++) {
