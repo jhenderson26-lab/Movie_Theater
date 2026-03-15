@@ -180,3 +180,29 @@
     /* ... rest of your card styles ... */
 }
 
+/* The base square shape */
+.seat-box {
+    width: 45px;
+    height: 45px;
+    line-height: 45px; /* Centers text vertically */
+    text-align: center; /* Centers text horizontally */
+    margin: 5px;
+    display: inline-block;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: white;
+    cursor: default;
+}
+
+/* Red if isTaken is false (Available) */
+.available {
+    background-color: #e74c3c; /* A nice Red */
+}
+
+/* Green if isTaken is true (Taken) */
+.taken {
+    background-color: #2ecc71; /* A nice Green */
+}
+
+

@@ -4,19 +4,63 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
     <title>Movie Theater</title>
+    <style>
+        /* This ensures the seats wrap into rows like a theater */
+        .theater-grid {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 600px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 10px;
+        }
+
+        .seat-box {
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            margin: 5px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            font-family: sans-serif;
+
+            /* Add these to fix button defaults */
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+
+        /* Red if isTaken is FALSE */
+        .available {
+            background-color: #ff4d4d;
+            border: 2px solid #b30000;
+        }
+
+        /* Green if isTaken is TRUE */
+        .taken {
+            background-color: #2ecc71;
+            border: 2px solid #1e8449;
+        }
+
+            .seat-box:hover {
+                filter: brightness(1.2);
+            }
+    </style>
 </head>
 <body>
 <h1>Room Details</h1>
 
 <!-- Thymeleaf will replace the text inside the span with the seatCount value -->
 <p>Total seats in this room: <span th:text="${seatCount}">0</span></p>
-<div th:each="seat : ${RoomSeats}">
-    <div th:text="${seat.seatNumber}"
-         th:style="${seat.isTaken} ? 'background-color: green; color: white;' : 'background-color: red; color: white;'"
-         style="padding: 10px; margin: 5px; display: inline-block; border-radius: 5px;">
-        <!-- Seat number appears here -->
-    </div>
+<div class="theater-container">
+    <button th:each="seat : ${RoomSeats}"
+            th:text="${seat.seatNumber}"
+            th:class="${seat.isTaken} ? 'seat-box taken' : 'seat-box available'"
+            type="button">
+    </button>
 </div>
+
 
 </body>
 </html>
