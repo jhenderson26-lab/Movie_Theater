@@ -41,4 +41,8 @@ public class RoomService {
         }
         seatRepository.saveAll(seats);
     }
+
+    public void addRoom(Room room) {
+        roomRepository.save(room);
+    }
 }

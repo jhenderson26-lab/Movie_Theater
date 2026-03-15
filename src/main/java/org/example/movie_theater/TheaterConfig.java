@@ -40,8 +40,18 @@ public class TheaterConfig {
                     ,30
             )
                     ;
+            Movie theThing = new Movie(
+                    "The Thing",
+                    LocalDate.of(1982, 6, 25),
+                    "Horror",
+                    "A research team in Antarctica is hunted by a shape-shifting alien.",
+                    15.00,
+                    18,
+                    109
+            );
             iceAge.getRooms().add(theater1);
             movieRepo.save(iceAge);
+            movieRepo.save(theThing);
         };
     }
 }

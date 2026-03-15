@@ -26,6 +26,7 @@ public class Room {
     private List<Movie> movies = new ArrayList<>();
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("seatNumber ASC")
     private List<Seat> seats = new ArrayList<>();
 
     public Room(String name, Integer capacity) {

@@ -87,13 +87,16 @@ public class ViewController {
     }
 
     @PostMapping("/AddToCart")
-    public String addToCart(@RequestParam Long movieId,
-                            @RequestParam Long seatId,
+    public String addToCart(@RequestParam(required = false) Long movieId,
+                            @RequestParam(required = false) Long seatId,
                             Principal principal) {
         // principal is the logged-in user session
         User user = userService.findByUsername(principal.getName());
-        Movie movie = movieService.findMovieById(movieId);
 
+        if (movieId == null || seatId == null || principal == null){
+            return "redirect:/Cart";
+        }
+        Movie movie = movieService.findMovieById(movieId);
         ticketService.createTicketForSeat(seatId, user, movie);
         return "redirect:/Cart";
     }
@@ -125,4 +128,53 @@ public class ViewController {
         ticketService.updateTicketSeat(ticketId, newSeatId);
         return "redirect:/Cart";
     }
+
+    @PostMapping("/checkout")
+    public String processCheckout(@RequestParam("cartItemIds") List<Long> cartItemIds, Principal principal) {
+
+        User user = userService.findByUsername(principal.getName());
+        List<Ticket> cartItems = ticketService.getCartByUser(user);
+
+        for (Ticket item : cartItems) {
+            System.out.println("Ticket ID: " + item.getId());
+
+            if (item.getSeat() != null) {
+                System.out.println("Seat Number: " + item.getSeat().getSeatNumber());
+            }
+        }
+
+        return "redirect:/Cart";
+    }
+
+    @PostMapping("/AddingRoomPage")
+    public String AddingRoom(Model model){
+        model.addAttribute("Movielist", movieService.getAllMovies());
+        return "Making/NewRoom";
+    }
+
+    @PostMapping("/AddedNewRoom")
+    public String AddedRoom(@ModelAttribute Room room, @RequestParam(value = "movies", required = false) Long movieId) {
+        if (room.getName() == null || room.getName().isEmpty()) {
+            return "redirect:/AddingRoomPage";
+        }
+        if (movieId != null) {
+            Movie movie = movieService.findMovieById(movieId);
+            movie.getRooms().add(room);
+        }
+        roomService.addRoom(room);
+
+        int seatsPerRow = (int) Math.sqrt(room.getCapacity());
+        int rows = (int) Math.ceil((double) room.getCapacity() / seatsPerRow);
+
+        if (rows <= seatsPerRow) {
+
+            seatsPerRow--;
+            rows = (int) Math.ceil((double) room.getCapacity() / seatsPerRow);
+        }
+        Long NewRoom = room.getId();
+        roomService.initializeSeats(NewRoom, rows, seatsPerRow);
+
+        return "Movie/AllMovies";
+    }
+
 }
