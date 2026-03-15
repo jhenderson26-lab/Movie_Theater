@@ -2,7 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <style>
+        .main-header {
+            display: flex;
+            align-items: center;
+            padding: 15px 40px;
+            border-bottom: 2px solid #a00000;
+            background-color: black;
+        }
+    </style>
     <title>Movie Theater - Theaters</title>
 </head>
 <body>
@@ -16,7 +25,7 @@
 
             <div class="room-card">
                 <div class="room-info-section">
-                    <a th:href="@{/rooms/{id}/seats(id=${room.id})}" class="room-main-link">
+                    <a th:href="@{/}" class="room-main-link">
                         <h2 th:text="'Theater: ' + ${room.getName()}">Theater: #</h2>
                         <small class="click-hint">View Seats &raquo;</small>
                     </a>

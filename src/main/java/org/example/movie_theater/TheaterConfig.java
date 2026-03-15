@@ -36,8 +36,8 @@ public class TheaterConfig {
                     "Animation",
                     "A sloth, a mammoth, and a saber-toothed tiger team up.",
                     12.50,
-                    30
-                    ,12
+                    12
+                    ,30
             )
                     ;
             iceAge.getRooms().add(theater1);

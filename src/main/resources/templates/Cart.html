@@ -2,6 +2,17 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" th:href="@{/style.css}">
+    <!-- just have this for navbar styling, im not sure why the style.css won't link in some cases -->
+    <style>
+        .main-header {
+            display: flex;
+            align-items: center;
+            padding: 15px 40px;
+            border-bottom: 2px solid #a00000;
+            background-color: black;
+        }
+    </style>
+
     <title>Your Cart</title>
     <style>
         body { font-family: -apple-system, sans-serif; background: #f2f2f7; padding: 40px; }
