@@ -189,4 +189,22 @@ public class ViewController {
         return "Movie/AllMovies";
     }
 
+    @PostMapping("/AddingMoviePage")
+    public String AddingMovie(Model model){
+        model.addAttribute("Roomlist", roomService.getAllRooms());
+        return "Making/NewMovie";
+    }
+
+    @PostMapping("/AddedNewMovie")
+    public String AddedMovie(@ModelAttribute Movie movie, Model model, @RequestParam(value = "room", required = false) Long roomId){
+        if(movie.getTitle() == null || movie.getTitle().isEmpty()){
+            return "redirect:/NewMovie";
+        }
+        if (roomId != null) {
+            Room room = roomService.findRoomById(roomId);
+            movie.getRooms().add(room);
+        }
+        movieService.saveMovie(movie);
+        return "Movie/AllMovies";
+    }
 }
