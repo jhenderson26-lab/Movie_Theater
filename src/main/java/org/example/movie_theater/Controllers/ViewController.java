@@ -155,7 +155,7 @@ public class ViewController {
         User user = userService.findByUsername(principal.getName());
         List<Ticket> tickets = ticketService.getPurchasedTickets(user);
         model.addAttribute("tickets", tickets);
-        return "Tickets/MyTickets";
+        return "MyTickets";
     }
 
     @PostMapping("/AddingRoomPage")
