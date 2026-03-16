@@ -133,17 +133,29 @@ public class ViewController {
     public String processCheckout(@RequestParam("cartItemIds") List<Long> cartItemIds, Principal principal) {
 
         User user = userService.findByUsername(principal.getName());
-        List<Ticket> cartItems = ticketService.getCartByUser(user);
-
-        for (Ticket item : cartItems) {
-            System.out.println("Ticket ID: " + item.getId());
-
-            if (item.getSeat() != null) {
-                System.out.println("Seat Number: " + item.getSeat().getSeatNumber());
-            }
+        for (Long ticketId : cartItemIds) {
+            ticketService.purchaseTicket(ticketId);
         }
+        return "redirect:/MyTickets";
+//        List<Ticket> cartItems = ticketService.getCartByUser(user);
+//
+//        for (Ticket item : cartItems) {
+//            System.out.println("Ticket ID: " + item.getId());
+//
+//            if (item.getSeat() != null) {
+//                System.out.println("Seat Number: " + item.getSeat().getSeatNumber());
+//            }
+//        }
+//
+//        return "redirect:/Cart";
+    }
 
-        return "redirect:/Cart";
+    @GetMapping("/MyTickets")
+    public String viewPurchasedTickets(Model model, Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        List<Ticket> tickets = ticketService.getPurchasedTickets(user);
+        model.addAttribute("tickets", tickets);
+        return "Tickets/MyTickets";
     }
 
     @PostMapping("/AddingRoomPage")

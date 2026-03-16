@@ -21,6 +21,9 @@ public class TicketService {
     public List<Ticket> getCartByUser(User user) {
         return ticketRepository.findByUserAndStatus(user, "IN_CART");
     }
+    public List<Ticket> getPurchasedTickets(User user) {
+        return ticketRepository.findByUserAndStatus(user, "PURCHASED!");
+    }
 
     public Ticket findTicketById(Long id) {
         return ticketRepository.findById(id)
@@ -89,5 +92,12 @@ public class TicketService {
         seat.setOccupied(false);
         seatRepository.save(seat);
         ticketRepository.delete(ticket);
+    }
+
+    @Transactional
+    public void purchaseTicket(Long ticketId) {
+        Ticket ticket = findTicketById(ticketId);
+        ticket.setStatus("PURCHASED!");
+        ticketRepository.save(ticket);
     }
 }
