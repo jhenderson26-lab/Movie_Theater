@@ -5,76 +5,220 @@
   <title>My Ticket History - RedTicket</title>
   <link rel="stylesheet" th:href="@{/style.css}">
   <style>
-    body { background-color: #f2f2f7; font-family: -apple-system, sans-serif; }
-
-    .history-container {
-        max-width: 800px;
-        margin: 60px auto;
-        padding: 0 20px;
+    :root {
+      --brand-red: #e50914;
+      --bg-black: #000000;
+      --card-gray: #141414;
+      --text-white: #ffffff;
+      --text-muted: #808080;
     }
 
-    .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 30px; letter-spacing: -1px; }
-
-    /* Ticket Stub Style */
-    .ticket-stub {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        padding: 25px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    body {
+      background-color: var(--bg-black);
+      color: var(--text-white);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
     }
 
-    .movie-info h3 { margin: 0; font-size: 1.2rem; font-weight: 700; }
-    .movie-info p { margin: 5px 0 0 0; color: #8e8e93; font-size: 0.9rem; }
-
-    .ticket-details { text-align: right; }
-    .seat-tag {
-        background: #5856D6; /* iOS Purple */
-        color: white;
-        padding: 4px 12px;
-        border-radius: 8px;
-        font-weight: 700;
-        font-size: 0.8rem;
+    /* Navbar styles to match your image */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 50px;
+      background: var(--bg-black);
+      border-bottom: 2px solid var(--brand-red); /* Red line from your image */
     }
-    .price-text { display: block; margin-top: 8px; font-weight: 600; color: #1c1c1e; }
 
-    .empty-state { text-align: center; padding: 100px 0; color: #8e8e93; }
-    .browse-btn { color: #5856D6; text-decoration: none; font-weight: 600; }
+    .logo img {
+      height: 50px;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    /* Page Layout */
+    .container {
+      max-width: 750px; /* Reduced from 1000px */
+      margin: 50px auto;
+      padding: 0 20px;
+    }
+
+    .page-header {
+      margin-bottom: 40px;
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+      margin: 0;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+    }
+
+    /* Ticket Grid & Cards */
+    .ticket-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .ticket-card {
+      background: var(--card-gray);
+      border-radius: 12px;
+      display: flex;
+      overflow: hidden;
+      border: 1px solid #333;
+      transition: transform 0.2s;
+    }
+
+    .ticket-card:hover {
+      transform: scale(1.01);
+      border-color: var(--brand-red);
+    }
+
+    .ticket-content {
+      flex: 3;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .movie-info {
+      margin-bottom: 15px;
+    }
+
+    .movie-title {
+      font-size: 1.4rem;
+      margin: 5px 0 0 0;
+      color: var(--brand-red);
+    }
+
+    .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-info {
+      display: flex;
+      gap: 40px;
+    }
+
+    .price {
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* Perforated edge effect and Actions */
+    .ticket-actions {
+      flex: 0 0 170px;
+      background: #1f1f1f;
+      border-left: 2px dashed var(--bg-black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .edit-btn {
+      background: #444;
+      color: white;
+    }
+
+    .edit-btn:hover { background: #555; }
+
+    .delete-btn {
+      background: transparent;
+      color: #ff4444;
+      border: 1px solid #ff4444;
+    }
+
+    .delete-btn:hover {
+      background: #ff4444;
+      color: white;
+    }
+
+
   </style>
 </head>
 <body>
 
 <div th:replace="~{fragments :: navbar}"></div>
 
-<div class="history-container">
-  <h1 class="page-title">My Tickets</h1>
+<div class="container">
+  <header class="page-header">
+    <h1>My Tickets</h1>
+    <p>Manage and review all your movie bookings</p>
+  </header>
 
-  <div th:if="${#lists.isEmpty(history)}" class="empty-state">
+  <!-- Empty State -->
+  <div th:if="${#lists.isEmpty(history)}" class="empty-state" style="text-align: center; padding: 50px;">
     <p>You haven't booked any movies yet.</p>
-    <a th:href="@{/AllMovies}" class="browse-btn">Find a movie to watch →</a>
+    <a th:href="@{/AllMovies}" class="btn edit-btn" style="text-decoration: none; display: inline-block; margin-top: 15px;">Find a movie to watch →</a>
   </div>
 
-  <div th:each="ticket : ${history}" class="ticket-stub">
-    <div class="movie-info">
-      <h3 th:text="${ticket.movie.title}">Movie Title</h3>
-      <p>
-        <span th:text="${ticket.movie.genre}">Genre</span> •
-        <span th:text="${ticket.movie.show_time_hour} + 'h ' + ${ticket.movie.show_time_minute} + 'm'">Duration</span>
-      </p>
-    </div>
+  <div class="ticket-grid">
+    <!-- Iterating through the history list -->
+    <div th:each="ticket : ${history}" class="ticket-card">
+      <div class="ticket-content">
+        <div class="movie-info">
+          <span class="label" th:text="${ticket.movie.genre}">Genre</span>
+          <h3 class="movie-title" th:text="${ticket.movie.title}">Movie Title</h3>
+        </div>
 
-    <div class="ticket-details">
-      <span class="seat-tag" th:text="'Seat ' + ${ticket.seat.seatNumber}">Seat A1</span>
-      <span class="price-text" th:text="'$' + ${#numbers.formatDecimal(ticket.cost, 1, 2)}">$0.00</span>
+        <div class="meta-info">
+          <div>
+            <span class="label">Duration</span>
+            <p th:text="${ticket.movie.show_time_hour} + 'h ' + ${ticket.movie.show_time_minute} + 'm'">2h 30m</p>
+          </div>
+          <div>
+            <span class="label">Seat</span>
+            <p th:text="${ticket.seat.seatNumber}">G-12</p>
+          </div>
+          <div>
+            <span class="label">Cost</span>
+            <p class="price" th:text="'$' + ${#numbers.formatDecimal(ticket.cost, 1, 2)}">$0.00</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action sidebar -->
+      <div class="ticket-actions">
+<!--        <button class="btn edit-btn">View Details</button>-->
+<!--        &lt;!&ndash; Example delete button if you have a delete mapping &ndash;&gt;-->
+<!--        <form th:action="@{/tickets/delete/{id}(id=${ticket.id})}" method="post" style="width: 100%;">-->
+<!--          <button type="submit" class="btn delete-btn" style="width: 100%;">Cancel</button>-->
+<!--        </form>-->
+      </div>
     </div>
   </div>
 </div>
+
+</body>
+
 
 </body>
 </html>
