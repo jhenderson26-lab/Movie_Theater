@@ -123,23 +123,24 @@
 
   <nav>
     <ul class="nav-items">
-      <li><a th:href="@{/AllMovies}" class="nav-link">Showings</a></li>
-      <li><a th:href="@{/Rooms}" class="nav-link">Theaters</a></li>
-
-      <li sec:authorize="isAuthenticated()">
-        <a th:href="@{/Cart}" class="nav-link">Cart</a>
-      </li>
-      <li sec:authorize="isAuthenticated()">
-        <a th:href="@{/History}" class="nav-link">History</a>
-      </li>
 
       <li class="admin-dropdown" sec:authorize="hasRole('ADMIN')">
         <button class="drop-btn">Manage ▾</button>
         <div class="dropdown-menu">
-          <a th:href="@{/AddingMoviePage}">Add New Movie</a>
-          <a th:href="@{/AddingRoomPage}">Add New Room</a>
-          <a th:href="@{/AllMovies}">Admin Dashboard</a>
+          <a th:href="@{/AddingMoviePage}">Create New Movie</a>
+          <a th:href="@{/AddingRoomPage}">Create New Room</a>
         </div>
+      </li>
+
+      <li><a th:href="@{/AllMovies}" class="nav-link">Showings</a></li>
+      <li><a th:href="@{/Rooms}" class="nav-link">Theaters</a></li>
+
+      <li sec:authorize="isAuthenticated()">
+        <a th:href="@{/History}" class="nav-link">Your Tickets</a>
+      </li>
+
+      <li sec:authorize="isAuthenticated()">
+        <a th:href="@{/Cart}" class="nav-link">Cart</a>
       </li>
 
       <li sec:authorize="isAnonymous()">

@@ -2,39 +2,236 @@
 <html xmlns:th="http://thymeleaf.org" class="html-root">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title class="page-title">Red Ticket Cinema</title>
+
+    <style>
+        /* CSS Variables - Matching your "Add New Movie" palette */
+        :root {
+            --bg-dark: #121212;
+            --card-bg: #1c1c1c;
+            --input-bg: #2a2a2a;
+            --primary-red: #e50914;
+            --text-main: #ffffff;
+            --text-muted: #b3b3b3;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Layout Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Hero Section Styling */
+        .hero-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
+            margin-bottom: 80px;
+        }
+
+        .hero-content {
+            flex: 1.2;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+
+        .text-red {
+            color: var(--primary-red);
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            max-width: 500px;
+        }
+
+        /* Visual Stack (Replacing the old layout) */
+
+        /* Visual Stack - Fixed for z-fighting and flickering */
+        .hero-visual {
+            flex: 1;
+            position: relative;
+            height: 450px;
+            /* Forces a clean stacking context for children */
+            isolation: isolate;
+        }
+
+        .image-wrapper {
+            position: absolute;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            /* Smooth transition without layout jumping */
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
+            box-shadow 0.4s ease,
+            filter 0.4s ease,
+            z-index 0s; /* Z-index should change instantly to prevent flickering */
+            /* Hardware acceleration to prevent visual artifacts */
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Positioned using coordinates instead of transforms to avoid hover conflicts */
+        .main-img {
+            width: 80%;
+            z-index: 2;
+            top: 0;
+            right: 0;
+        }
+
+        .sub-img {
+            width: 70%;
+            z-index: 1;
+            bottom: 10%;
+            left: 0;
+            filter: grayscale(40%) brightness(0.8);
+        }
+
+        /* Responsive adjustment */
+        @media (max-width: 992px) {
+            .hero-visual {
+                height: 350px;
+                width: 100%;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+        }
+        /* Card Section - Matching the "Add Movie" modal look */
+        .glass-card {
+            background-color: var(--card-bg);
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .section-text {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        /* Button Styling */
+        .btn-group {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-red);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .btn-primary:hover {
+            background-color: #ff1e27;
+            box-shadow: 0 0 20px rgba(229, 9, 20, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: var(--input-bg);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-secondary:hover {
+            background-color: #3a3a3a;
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 992px) {
+            .hero-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero-subtitle { margin: 0 auto 32px; }
+            .btn-group { justify-content: center; }
+            .hero-visual { height: 300px; margin-top: 40px; }
+        }
+    </style>
 </head>
 <body class="body-bg">
-<!-- Header Section -->
 
 <div th:replace="~{fragments :: navbar}"></div>
 
-<!-- Main Content Area -->
-<main class="main-layout">
-    <section class="hero-section">
-        <h1 class="hero-title">Red Ticket Cinema</h1>
-        <div class="image-stack">
-            <div class="small-frame">
-                <img src="Images/Audience.png" class="theater-pic" alt="Audience">
+<main class="main-container">
+    <section class="hero-container">
+        <div class="hero-content">
+            <h1 class="hero-title">Your Front Row Seat to <span class="text-red">Magic</span></h1>
+            <p class="hero-subtitle">
+                Experience the latest cinematic masterpieces with premium sound,
+                comfortable seating, and our signature red carpet service.
+            </p>
+            <div class="btn-group">
+                <a href="/AllMovies" class="btn-primary">Get Tickets</a>
+                <a href="/Rooms" class="btn-secondary">View Theaters</a>
             </div>
-            <div class="large-frame">
-                <img src="Images/Seats.png" class="seats-pic" alt="Seats">
+        </div>
+
+        <div class="hero-visual">
+            <div class="image-wrapper sub-img">
+                <img src="Images/Seats.png" alt="Cinema Seating">
+            </div>
+            <div class="image-wrapper main-img">
+                <img src="Images/Audience.png" alt="Audience in 3D glasses">
             </div>
         </div>
     </section>
 
-    <!-- Right Side About Section -->
-    <aside class="sidebar-red">
-        <div class="about-card">
-            <h2 class="about-title">About Us</h2>
-            <p class="about-text">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    <section class="info-section">
+        <div class="glass-card">
+            <h2 class="section-title">About Red Ticket Cinema</h2>
+            <p class="section-text">
+                Red Ticket Cinema brings the golden age of movies into the modern era.
+                From state-of-the-art 4K projection to our gourmet concession stand,
+                every detail is designed to make your visit unforgettable.
             </p>
         </div>
-    </aside>
+    </section>
 </main>
+
 </body>
 </html>

@@ -8,7 +8,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-// Security/SecurityConfig.java
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -23,13 +22,14 @@ public class SecurityConfig {
                                 "/signup",
                                 "/login",
                                 "/resources/**",
-                                "/Images/**"
+                                "/Images/**",
+                                "/static/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login") // Your custom login page
-                        .defaultSuccessUrl("/AllMovies", true)
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
