@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/style.css}">
@@ -35,7 +35,16 @@
 
                 <div class="movies-list">
                     <p class="section-label">Now Playing:</p>
-
+                    <div sec:authorize="hasRole('ADMIN')">
+                        <form action="#" th:action="@{/}" method="post">
+                            <button>edit</button>
+                        </form>
+                    </div>
+                    <div sec:authorize="hasRole('ADMIN')">
+                        <form action="#" th:action="@{/}" method="post">
+                            <button>X</button>
+                        </form>
+                    </div>
                     <div th:each="movie : ${room.movies}" class="movie-entry">
                         <a th:href="@{/MoviePage/{id}(id=${movie.id})}" class="movie-page-link">
                             <p class="movie-name" th:text="${movie.title}">Movie Name</p>
@@ -43,6 +52,7 @@
                                 <span th:text="${movie.show_time_hour}">12</span>:<span th:text="${#numbers.formatInteger(movie.show_time_minute, 2)}">00</span>
                             </p>
                         </a>
+
                     </div>
 
                     <p th:if="${#lists.isEmpty(room.movies)}" class="no-movies">

@@ -246,4 +246,10 @@ public class ViewController {
         ticketService.removeTicketFromCart(id);
         return "redirect:/Cart";
     }
+
+    @PostMapping("/EditingMoivePage/{id}")
+    public String EditMoviePage(@PathVariable Long id, Model model){
+        model.addAttribute("Movielist", movieService.findMovieById(id));
+        return "Movie/EditMovie";
+    }
 }

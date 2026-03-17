@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -193,6 +193,14 @@
 
     <div th:if="${not #lists.isEmpty(Movielist)}" class="movie-grid">
         <div th:each="movie : ${Movielist}" class="movie-card">
+            <div sec:authorize="hasRole('ADMIN')">
+                <form th:action="@{/EditingMoivePage}" method="post">
+                    <button>edit</button>
+                </form>
+                <form th:action="@{/DeleteMovie}" method="post">
+                    <button>X</button>
+                </form>
+            </div>
             <div class="card-content">
                 <span class="movie-genre" th:text="${movie.genre}">GENRE</span>
                 <h2 class="movie-title" th:text="${movie.title}">Movie Title</h2>
