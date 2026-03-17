@@ -20,9 +20,9 @@ public class Seat {
     @Column(nullable = false)
     private String seatNumber;
 
-    @Setter
-    @Column(nullable = false)
-    private boolean isOccupied = false;
+    //@Setter
+    //@Column(nullable = false)
+    //private boolean isOccupied = false;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
@@ -31,6 +31,6 @@ public class Seat {
     public Seat(String seatNumber, Room room) {
         this.seatNumber = seatNumber;
         this.room = room;
-        this.isOccupied = false;
+        //this.isOccupied = false;
     }
 }

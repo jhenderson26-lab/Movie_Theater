@@ -1,49 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<header th:fragment="navbar" class="apple-header">
+  <style>
+    /* Modern Reset for the Navbar */
+    .apple-header {
+        --bg-glass: rgba(10, 10, 10, 0.8);
+        --accent-red: #ff3b30;
+        --text-main: #f5f5f7;
 
-<header th:fragment="navbar" class="main-header" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+        background: var(--bg-glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 40px;
+        height: 64px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif;
+        position: fixed; /* Ensures it stays at the top */
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+    }
+
+    .logo-box img {
+        height: 40px;
+        transition: opacity 0.2s;
+    }
+
+    .nav-items {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-link {
+        color: var(--text-main);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        opacity: 0.8;
+        transition: opacity 0.2s, color 0.2s;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .nav-link:hover {
+        opacity: 1;
+    }
+
+    /* The Admin Dropdown */
+    .admin-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .drop-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 6px 16px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 20px;
+        right: 0;
+        background: rgba(30, 30, 32, 0.95);
+        backdrop-filter: blur(15px);
+        min-width: 180px;
+        border-radius: 12px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 8px;
+    }
+
+    .dropdown-menu a, .dropdown-menu button {
+        display: block;
+        width: 100%;
+        padding: 10px 12px;
+        color: white;
+        text-decoration: none;
+        font-size: 13px;
+        text-align: left;
+        border-radius: 6px;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .dropdown-menu a:hover, .dropdown-menu button:hover {
+        background: var(--accent-red);
+    }
+
+    .admin-dropdown:hover .dropdown-menu {
+        display: block;
+    }
+
+    /* Specialized Buttons */
+    .sign-out {
+        color: var(--accent-red);
+        font-weight: 600;
+    }
+
+    /* Quick Spacer for the rest of the page so content doesn't hide under the fixed navbar */
+    body { padding-top: 64px; margin: 0; background-color: #000; }
+  </style>
+
   <div class="logo-box">
-    <img th:src="@{/Images/RedTicketLogo.png}" alt="RedTicket Logo" class="logo-img" />
+    <a th:href="@{/}"><img th:src="@{/Images/RedTicketLogo.png}" alt="Logo"></a>
   </div>
-  <nav class="nav-bar">
-    <form th:action="@{/}" class="nav-form">
-      <button type="submit" class="nav-btn">Home</button>
-    </form>
-    <form th:action="@{/Cart}" class="nav-form" sec:authorize="isAuthenticated()">
-      <button type="submit" class="nav-btn">🛒 Cart</button>
-    </form>
-    <form th:action="@{/TicketHistory}" class="nav-form" sec:authorize="isAuthenticated()">
-      <button type="submit" class="nav-btn">Purchase History</button>
-    </form>
 
-    <form th:action="@{/AllMovies}" class="nav-form">
-      <button type="submit" class="nav-btn">Today's Showings</button>
-    </form>
-    <form th:action="@{/Rooms}" class="nav-form">
-      <button type="submit" class="nav-btn">Theaters</button>
-    </form>
+  <nav>
+    <ul class="nav-items">
+      <li><a th:href="@{/AllMovies}" class="nav-link">Showings</a></li>
+      <li><a th:href="@{/Rooms}" class="nav-link">Theaters</a></li>
 
-    <div sec:authorize="isAnonymous()" style="display: flex; gap: 10px;">
-      <form th:action="@{/login}" class="nav-form">
-        <button type="submit" class="nav-btn login-style">Sign In</button>
-      </form>
-      <form th:action="@{/signup}" class="nav-form">
-        <button type="submit" class="nav-btn signup-style">Sign Up</button>
-      </form>
-    </div>
+      <li sec:authorize="isAuthenticated()">
+        <a th:href="@{/Cart}" class="nav-link">Cart</a>
+      </li>
+      <li sec:authorize="isAuthenticated()">
+        <a th:href="@{/History}" class="nav-link">History</a>
+      </li>
 
-    <div sec:authorize="isAuthenticated()">
-      <form th:action="@{/logout}" method="post" class="nav-form">
-        <button type="submit" class="nav-btn logout-style">Sign Out</button>
-      </form>
-    </div>
+      <li class="admin-dropdown" sec:authorize="hasRole('ADMIN')">
+        <button class="drop-btn">Manage ▾</button>
+        <div class="dropdown-menu">
+          <a th:href="@{/AddingMoviePage}">Add New Movie</a>
+          <a th:href="@{/AddingRoomPage}">Add New Room</a>
+          <a th:href="@{/AllMovies}">Admin Dashboard</a>
+        </div>
+      </li>
+
+      <li sec:authorize="isAnonymous()">
+        <a th:href="@{/login}" class="nav-link">Sign In</a>
+      </li>
+      <li sec:authorize="isAuthenticated()">
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+          <button type="submit" class="nav-link sign-out">Sign Out</button>
+        </form>
+      </li>
+    </ul>
   </nav>
 </header>
-
-</body>
 </html>

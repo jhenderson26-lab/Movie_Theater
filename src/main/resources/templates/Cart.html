@@ -20,35 +20,62 @@
         .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #e5e5ea; }
         .edit-link { color: #5856D6; text-decoration: none; font-weight: 600; font-size: 0.9em; }
         .checkout-bar { margin-top: 30px; text-align: right; }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #ff3b30; /* Apple Red */
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 15px;
+            font-size: 0.9rem;
+        }
+
+        .remove-btn:hover {
+            text-decoration: underline;
+        }
+
+        .cart-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e5ea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
 <div th:replace="~{fragments :: navbar}"></div>
 
-<div class="cart-card">
-    <h1>Shopping Cart</h1>
+<div class="cart-container">
+    <h1>Your Cart</h1>
 
-    <div th:if="${#lists.isEmpty(cartItems)}" style="text-align: center; padding: 40px;">
-        <p>Your cart is empty.</p>
-        <a href="/AllMovies" style="color: #007aff;">Go find a movie</a>
+    <div th:each="item : ${cartItems}" class="cart-item">
+        <div class="item-details">
+            <h3 th:text="${item.movie.title}">Movie Title</h3>
+            <p th:text="'Seat: ' + ${item.seat.seatNumber}">Seat A1</p>
+        </div>
+
+        <div class="item-actions">
+            <span class="price" th:text="'$' + ${item.cost}">$0.00</span>
+
+            <form th:action="@{/Cart/Remove/{id}(id=${item.id})}" method="post" style="display:inline;">
+                <button type="submit" class="remove-btn">Remove</button>
+            </form>
+        </div>
     </div>
-    <form th:action="@{/checkout}" method="post">
-        <div th:each="item : ${cartItems}" class="cart-item">
-            <input type="hidden" name="cartItemIds" th:value="${item.id}" />
-            <div>
-                <h3 th:text="${item.movie.title}" style="margin: 0;">Movie</h3>
-                <p style="margin: 5px 0; color: #8e8e93;">Seat: <span th:text="${item.seat.seatNumber}">A1</span></p>
-            </div>
-            <div style="text-align: right;">
-                <p th:text="'$' + ${item.cost}" style="font-weight: 700; margin-bottom: 10px;">$0.00</p>
-                <a th:href="@{/EditTicket/{id}(id=${item.id})}" class="edit-link">Edit Seat</a>
-            </div>
+
+    <div th:if="${!#lists.isEmpty(cartItems)}" class="cart-footer">
+        <div class="total-section">
+            <span>Total:</span>
+            <h2 th:text="'$' + ${#aggregates.sum(cartItems.![cost])}">$0.00</h2>
         </div>
 
-        <div th:if="${!#lists.isEmpty(cartItems)}" class="checkout-bar">
-            <button class="apple-btn" style="width: 200px;">Checkout</button>
-        </div>
-    </form>
+        <form th:action="@{/Checkout}" method="post">
+            <button type="submit" class="apple-btn">Confirm Purchase</button>
+        </form>
+    </div>
 </div>
 
 </body>

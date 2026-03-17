@@ -1,4 +1,4 @@
-/* Core Layout */
+/* Core Layout
 .body-bg {
     margin: 0;
     padding: 0;
@@ -35,7 +35,7 @@
     height: 60px;
 }
 
-/* Content Container */
+
 .main-layout {
     display: flex;
     min-height: 90vh;
@@ -54,7 +54,6 @@
     text-transform: uppercase;
 }
 
-/* Image Frames */
 .image-stack {
     position: relative;
 }
@@ -81,13 +80,11 @@
     object-fit: cover;
 }
 
-/* Right Side Styling */
 .sidebar-red {
     flex: 1;
     background-color: #cc0000;
     display: flex;
     justify-content: center;
-    /*align-items: center;*/
     padding: 40px;
 }
 
@@ -111,4 +108,4 @@
     font-size: 15px;
     color: #e0e0e0;
 }
-
+*/

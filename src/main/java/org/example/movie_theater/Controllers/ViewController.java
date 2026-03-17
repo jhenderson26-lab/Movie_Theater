@@ -60,6 +60,7 @@ public class ViewController {
 
     // ticket related endpoints
 
+    /*
     @GetMapping("/TicketBooking/{movieId}")
     public String showSeatSelection(@PathVariable Long movieId, Model model) {
         Movie movie = movieService.findMovieById(movieId);
@@ -86,12 +87,26 @@ public class ViewController {
         model.addAttribute("isEditing", false);
         return "Movie/SeatSelection";
     }
+    */
+
+    @GetMapping("/TicketBooking/{movieId}")
+    public String showSeatSelection(@PathVariable Long movieId, Model model) {
+        Movie movie = movieService.findMovieById(movieId);
+        List<Seat> allSeats = movie.getRooms().getFirst().getSeats();
+
+        List<Long> occupiedSeatIds = ticketService.getOccupiedSeatIdsForMovie(movieId);
+
+        model.addAttribute("movie", movie);
+        model.addAttribute("seats", allSeats);
+        model.addAttribute("occupiedSeatIds", occupiedSeatIds);
+        model.addAttribute("isEditing", false);
+        return "Movie/SeatSelection";
+    }
 
     @PostMapping("/AddToCart")
     public String addToCart(@RequestParam(required = false) Long movieId,
                             @RequestParam(required = false) Long seatId,
                             Principal principal) {
-        // principal is the logged-in user session
         User user = userService.findByUsername(principal.getName());
 
         if (movieId == null || seatId == null || principal == null){
@@ -159,7 +174,7 @@ public class ViewController {
         return "Tickets/MyTickets";
     }
 
-    @PostMapping("/AddingRoomPage")
+    @GetMapping("/AddingRoomPage")
     public String AddingRoom(Model model){
         model.addAttribute("Movielist", movieService.getAllMovies());
         return "Making/NewRoom";
@@ -190,7 +205,7 @@ public class ViewController {
         return "Movie/AllMovies";
     }
 
-    @PostMapping("/AddingMoviePage")
+    @GetMapping("/AddingMoviePage")
     public String AddingMovie(Model model){
         model.addAttribute("Roomlist", roomService.getAllRooms());
         return "Making/NewMovie";
@@ -207,5 +222,28 @@ public class ViewController {
         }
         movieService.saveMovie(movie);
         return "Movie/AllMovies";
+    }
+
+    @PostMapping("/Checkout")
+    public String processCheckout(Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        ticketService.checkout(user);
+
+        return "redirect:/History";
+    }
+
+    @GetMapping("/History")
+    public String showHistory(Model model, Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        List<Ticket> history = ticketService.getPurchaseHistory(user);
+
+        model.addAttribute("history", history);
+        return "/TicketHistory";
+    }
+
+    @PostMapping("/Cart/Remove/{id}")
+    public String removeFromCart(@PathVariable Long id) {
+        ticketService.removeTicketFromCart(id);
+        return "redirect:/Cart";
     }
 }

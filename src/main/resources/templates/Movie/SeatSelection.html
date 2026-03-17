@@ -47,17 +47,17 @@
 
         <div class="seat-grid">
             <div th:each="seat : ${seats}">
-                <input type="radio" th:id="${'seat-' + seat.id}"
-                       th:name="${isEditing} ? 'newSeatId' : 'seatId'"
+                <input type="radio"
+                       th:id="${'seat-' + seat.id}"
+                       name="seatId"
                        th:value="${seat.id}"
                        class="seat-radio"
-                       th:disabled="${seat.isOccupied}">
-
+                       th:disabled="${#lists.contains(occupiedSeatIds, seat.id)}">
                 <label th:for="${'seat-' + seat.id}"
-                       class="seat-label"
-                       th:classappend="${seat.isOccupied} ? 'occupied' : ''"
-                       th:text="${seat.seatNumber}">
-                </label>
+                      class="seat-label"
+                      th:classappend="${#lists.contains(occupiedSeatIds, seat.id)} ? 'occupied' : ''"
+                      th:text="${seat.seatNumber}">
+            </label>
             </div>
         </div>
 

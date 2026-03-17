@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>My Ticket History - RedTicket</title>
+  <link rel="stylesheet" th:href="@{/style.css}">
+  <style>
+    body { background-color: #f2f2f7; font-family: -apple-system, sans-serif; }
+
+    .history-container {
+        max-width: 800px;
+        margin: 60px auto;
+        padding: 0 20px;
+    }
+
+    .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 30px; letter-spacing: -1px; }
+
+    /* Ticket Stub Style */
+    .ticket-stub {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 25px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .movie-info h3 { margin: 0; font-size: 1.2rem; font-weight: 700; }
+    .movie-info p { margin: 5px 0 0 0; color: #8e8e93; font-size: 0.9rem; }
+
+    .ticket-details { text-align: right; }
+    .seat-tag {
+        background: #5856D6; /* iOS Purple */
+        color: white;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.8rem;
+    }
+    .price-text { display: block; margin-top: 8px; font-weight: 600; color: #1c1c1e; }
+
+    .empty-state { text-align: center; padding: 100px 0; color: #8e8e93; }
+    .browse-btn { color: #5856D6; text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="history-container">
+  <h1 class="page-title">My Tickets</h1>
+
+  <div th:if="${#lists.isEmpty(history)}" class="empty-state">
+    <p>You haven't booked any movies yet.</p>
+    <a th:href="@{/AllMovies}" class="browse-btn">Find a movie to watch →</a>
+  </div>
+
+  <div th:each="ticket : ${history}" class="ticket-stub">
+    <div class="movie-info">
+      <h3 th:text="${ticket.movie.title}">Movie Title</h3>
+      <p>
+        <span th:text="${ticket.movie.genre}">Genre</span> •
+        <span th:text="${ticket.movie.show_time_hour} + 'h ' + ${ticket.movie.show_time_minute} + 'm'">Duration</span>
+      </p>
+    </div>
+
+    <div class="ticket-details">
+      <span class="seat-tag" th:text="'Seat ' + ${ticket.seat.seatNumber}">Seat A1</span>
+      <span class="price-text" th:text="'$' + ${#numbers.formatDecimal(ticket.cost, 1, 2)}">$0.00</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
