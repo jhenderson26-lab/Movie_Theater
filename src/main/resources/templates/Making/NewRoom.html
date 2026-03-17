@@ -6,8 +6,8 @@
     <input type="number" name="capacity" min="1" required/>
 
     <h1>Assign Movies:</h1>
-    <select name="movies" id="movieSelect">
-        <option value="" disabled selected>-- Choose a Movie --</option>
+    <select name="movieIds" id="movieSelect" multiple="multiple">
+        <option value="" disabled>-- Choose Movies (Hold Ctrl to select multiple) --</option>
         <option th:each="movie : ${Movielist}"
                 th:value="${movie.id}"
                 th:text="${movie.title}">

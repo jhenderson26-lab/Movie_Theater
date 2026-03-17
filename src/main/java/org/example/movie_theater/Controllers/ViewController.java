@@ -212,17 +212,27 @@ public class ViewController {
     }
 
     @PostMapping("/AddedNewMovie")
-    public String AddedMovie(@ModelAttribute Movie movie, Model model, @RequestParam(value = "room", required = false) Long roomId){
-        if(movie.getTitle() == null || movie.getTitle().isEmpty()){
+    public String AddedMovie(
+            @RequestParam(value = "movieIds", required = false) List<Long> movieIds,
+            @RequestParam(value = "room", required = false) Long roomId) {
+
+        if (movieIds == null || movieIds.isEmpty()) {
             return "redirect:/NewMovie";
         }
-        if (roomId != null) {
-            Room room = roomService.findRoomById(roomId);
-            movie.getRooms().add(room);
+
+        Room room = (roomId != null) ? roomService.findRoomById(roomId) : null;
+
+        for (Long movieId : movieIds) {
+            Movie movie = movieService.findMovieById(movieId);
+            if (room != null) {
+                movie.getRooms().add(room);
+            }
+            movieService.saveMovie(movie);
         }
-        movieService.saveMovie(movie);
+
         return "redirect:/AllMovies";
     }
+
 
     @PostMapping("/Checkout")
     public String processCheckout(Principal principal) {
@@ -247,9 +257,16 @@ public class ViewController {
         return "redirect:/Cart";
     }
 
-    @PostMapping("/EditingMoivePage/{id}")
-    public String EditMoviePage(@PathVariable Long id, Model model){
+    @PostMapping("/EditingMoivePage")
+    public String EditMoviePage(@RequestParam Long id, Model model) {
         model.addAttribute("Movielist", movieService.findMovieById(id));
+        model.addAttribute("Roomlist", roomService.getAllRooms());
         return "Movie/EditMovie";
+    }
+
+    @PutMapping("/UpdateMovie/{id}")
+    public String Updatedmove(){
+
+        return "Movie/AllMovies";
     }
 }

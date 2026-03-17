@@ -2,169 +2,95 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
-    <title>Movie Theater</title>
-</head>
-<body>
-<div class="form-container">
+    <title>Edit Movie</title>
+    <!-- CSS remains the same as your provided code -->
     <style>
-        :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --accent-color: #e50914;
-            --text-color: #ffffff;
-            --input-bg: #2b2b2b;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .form-container {
-            background-color: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            width: 100%;
-            max-width: 600px;
-        }
-
+        :root { --bg-color: #121212; --card-bg: #1e1e1e; --accent-color: #e50914; --text-color: #ffffff; --input-bg: #2b2b2b; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .form-container { background-color: var(--card-bg); padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; max-width: 600px; }
         h1 { text-align: center; margin-bottom: 2rem; }
-
-        form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
+        form { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         .form-group { display: flex; flex-direction: column; }
         .full-width { grid-column: span 2; }
-
         label { font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb; }
-
-        input, select, textarea {
-            background-color: var(--input-bg);
-            border: 1px solid #333;
-            border-radius: 6px;
-            padding: 0.8rem;
-            color: white;
-            font-size: 1rem;
-        }
-
-        /* Button Layout Fixes */
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            align-items: stretch;
-        }
-
-        .back-btn, .submit-btn {
-            padding: 1rem;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .back-btn {
-            flex: 1;
-            background-color: #3d3d3d;
-            color: white;
-        }
-
-        .submit-btn {
-            flex: 2; /* Keeps the red button larger */
-            background-color: var(--accent-color);
-            color: white;
-        }
-
+        input, select, textarea { background-color: var(--input-bg); border: 1px solid #333; border-radius: 6px; padding: 0.8rem; color: white; font-size: 1rem; }
+        .button-group { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .back-btn, .submit-btn { padding: 1rem; font-size: 1rem; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; transition: 0.3s; height: 50px; flex: 1; display: flex; align-items: center; justify-content: center; text-decoration: none;}
+        .back-btn { background-color: #3d3d3d; color: white; }
+        .submit-btn { flex: 2; background-color: var(--accent-color); color: white; }
         .back-btn:hover { background-color: #4d4d4d; }
         .submit-btn:hover { background-color: #b20710; }
     </style>
-    <h1>Add New Movie</h1>
-    <form th:action="@{/AddedNewMovie}" method="POST">
-        <!-- Movie Poster -->
+</head>
+<body>
+<div class="form-container">
+    <h1>Edit Movie</h1>
+    <!-- Action updated to handle the specific movie ID -->
+    <form th:action="@{/UpdateMovie/{id}(id=${Movielist.id})}" method="POST">
 
-
-        <!-- Title -->
+        <!-- Movie Title -->
         <div class="form-group">
             <label for="title">Movie Title</label>
-            <input type="text" id="title" name="title" placeholder="e.g. Inception" required>
+            <input type="text" id="title" name="title" th:value="${Movielist.title}" required>
         </div>
 
         <!-- Release Year -->
         <div class="form-group">
             <label for="releaseYear">Release Year</label>
-            <input type="date" id="releaseYear" name="releaseYear" required>
+            <input type="date" id="releaseYear" name="releaseYear" th:value="${Movielist.releaseYear}" required>
         </div>
 
         <!-- Genre -->
         <div class="form-group">
             <label for="genre">Genre</label>
             <select id="genre" name="genre" required>
-                <option value="">Select Genre</option>
-                <option value="action">Action</option>
-                <option value="comedy">Comedy</option>
-                <option value="drama">Drama</option>
-                <option value="sci-fi">Sci-Fi</option>
-                <option value="horror">Horror</option>
+                <option value="action" th:selected="${Movielist.genre == 'action'}">Action</option>
+                <option value="comedy" th:selected="${Movielist.genre == 'comedy'}">Comedy</option>
+                <option value="drama" th:selected="${Movielist.genre == 'drama'}">Drama</option>
+                <option value="sci-fi" th:selected="${Movielist.genre == 'sci-fi'}">Sci-Fi</option>
+                <option value="horror" th:selected="${Movielist.genre == 'horror'}">Horror</option>
             </select>
         </div>
-        <div class="form-group"> <!-- Added class for your CSS layout -->
+
+        <!-- Room Selection -->
+        <div class="form-group">
             <label for="roomSelect">Room</label>
             <select name="room" id="roomSelect" required>
-                <!-- The empty value="" ensures the 'required' attribute works -->
-                <option value="" disabled selected>-- Choose a Room --</option>
-
-                <!-- Ensure 'Roomlist' matches your Controller's model key -->
                 <option th:each="room : ${Roomlist}"
                         th:value="${room.id}"
-                        th:text="${room.name}">
+                        th:text="${room.name}"
+                        th:selected="${Movielist.rooms.contains(room)}">
                 </option>
             </select>
         </div>
 
-
-        <!-- Duration Hours -->
+        <!-- Showtime Hour -->
         <div class="form-group">
             <label for="show_time_hour">Showtime (Hour)</label>
-            <input type="number" id="show_time_hour" name="show_time_hour" min="0" placeholder="0" required>
+            <input type="number" id="show_time_hour" name="show_time_hour" th:value="${Movielist.show_time_hour}" min="0" required>
         </div>
 
-        <!-- Duration Minutes -->
+        <!-- Showtime Minute -->
         <div class="form-group">
             <label for="show_time_minute">Showtime (Minute)</label>
-            <input type="number" id="show_time_minute" name="show_time_minute" min="0" max="59" placeholder="0" required>
+            <input type="number" id="show_time_minute" name="show_time_minute" th:value="${Movielist.show_time_minute}" min="0" max="59" required>
         </div>
+
         <!-- Cost -->
         <div class="form-group">
             <label for="cost">Streaming/Rental Cost ($)</label>
-            <input type="number" id="cost" name="cost" step="0.01" placeholder="0.00" required>
+            <input type="number" id="cost" name="cost" step="0.01" th:value="${Movielist.cost}" required>
         </div>
+
         <!-- Description -->
         <div class="form-group full-width">
             <label for="description">Description</label>
-            <textarea id="description" name="description" rows="4" placeholder="Briefly describe the movie..." required></textarea>
+            <textarea id="description" name="description" rows="4" th:text="${Movielist.description}" required></textarea>
         </div>
 
-        <!-- Consolidated Button Group -->
         <div class="button-group full-width">
-            <button type="button" class="back-btn" onclick="history.back()">Back</button>
-            <button type="submit" class="submit-btn">Add Movie</button>
+            <button type="button" class="back-btn" onclick="history.back()">Cancel</button>
+            <button type="submit" class="submit-btn">Update Movie</button>
         </div>
     </form>
 </div>
