@@ -25,8 +25,8 @@ public class TheaterConfig {
         return args -> {
             if (userRepository.findByUsername("admin").isEmpty()) {
                 User admin = new User();
-                admin.setUsername("admin");
 
+                admin.setUsername("admin");
                 admin.setPassword(passwordEncoder.encode("123"));
                 admin.setRole("ADMIN");
 
@@ -56,7 +56,9 @@ public class TheaterConfig {
                     "A sloth, a mammoth, and a saber-toothed tiger team up.",
                     12.50,
                     12
-                    ,30
+                    ,30,
+                    30,
+                    1
             );
             Movie theThing = new Movie(
                     "The Thing",
@@ -65,7 +67,9 @@ public class TheaterConfig {
                     "A research team in Antarctica is hunted by a shape-shifting alien.",
                     15.00,
                     18,
-                    109
+                    109,
+                    30,
+                    1
             );
             iceAge.getRooms().add(theater1);
             theThing.getRooms().add(theater1);

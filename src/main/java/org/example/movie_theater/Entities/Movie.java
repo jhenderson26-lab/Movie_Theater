@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.springframework.data.relational.core.sql.In;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,6 +40,9 @@ public class Movie {
     private Integer show_time_minute;
     private Integer show_time_hour;
 
+    private Integer runtime_minute;
+    private Integer runtime_hour;
+
     @ManyToMany
     @JoinTable(
             name = "movie_rooms",
@@ -47,7 +51,7 @@ public class Movie {
     )
     private List<Room> rooms = new ArrayList<>();
 
-    public Movie(String title, LocalDate releaseYear, String genre, String description, Double cost, Integer show_time_hour, Integer show_time_minute) {
+    public Movie(String title, LocalDate releaseYear, String genre, String description, Double cost, Integer show_time_hour, Integer show_time_minute, Integer runtime_minute, Integer runtime_hour) {
         this.title = title;
         this.releaseYear = releaseYear;
         this.genre = genre;
@@ -55,5 +59,7 @@ public class Movie {
         this.cost = cost;
         this.show_time_hour = show_time_hour;
         this.show_time_minute = show_time_minute;
+        this.runtime_minute = runtime_minute;
+        this.runtime_hour = runtime_hour;
     }
 }

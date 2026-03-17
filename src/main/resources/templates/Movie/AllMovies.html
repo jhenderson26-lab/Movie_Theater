@@ -33,7 +33,6 @@
             padding: 60px 20px;
         }
 
-        /* Header Style matching the Front Page */
         .header-title {
             font-size: clamp(2rem, 4vw, 3rem);
             font-weight: 800;
@@ -55,7 +54,7 @@
         /* Movie Grid */
         .movie-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 30px;
         }
 
@@ -79,7 +78,6 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
         }
 
-        /* Badge for Genre */
         .movie-genre {
             display: inline-block;
             background-color: var(--input-bg);
@@ -102,18 +100,36 @@
             line-height: 1.2;
         }
 
+        /* Showtime and Room Styling */
+        .showtime-info {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .info-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #fff;
+        }
+
+        .info-tag span {
+            color: var(--primary-red);
+        }
+
         .movie-details {
             font-size: 0.95rem;
             color: var(--text-muted);
             margin-bottom: 25px;
-            /* Standard 3-line clamp */
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2; /* Reduced to 2 lines to make room for showtime */
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        /* Footer/Action Area */
         .card-footer {
             display: flex;
             justify-content: space-between;
@@ -152,7 +168,6 @@
             box-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
         }
 
-        /* Empty State Styling */
         .empty-state {
             text-align: center;
             padding: 120px 20px;
@@ -161,16 +176,9 @@
             border: 1px dashed var(--input-bg);
         }
 
-        .empty-state p {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-        }
-
-        /* Scrollbar styling for a premium feel */
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: var(--bg-dark); }
         ::-webkit-scrollbar-thumb { background: var(--input-bg); border-radius: 5px; }
-        ::-webkit-scrollbar-thumb:hover { background: #333; }
     </style>
 </head>
 <body>
@@ -188,8 +196,20 @@
             <div class="card-content">
                 <span class="movie-genre" th:text="${movie.genre}">GENRE</span>
                 <h2 class="movie-title" th:text="${movie.title}">Movie Title</h2>
+
+                <div class="showtime-info">
+                    <div class="info-tag">
+                        <span>🕒</span>
+                        <th:block th:text="${movie.show_time_hour + ':' + (movie.show_time_minute < 10 ? '0' + movie.show_time_minute : movie.show_time_minute)}"></th:block>
+                    </div>
+                    <div class="info-tag" th:if="${not #lists.isEmpty(movie.rooms)}">
+                        <span>🎬</span>
+                        <th:block th:text="${movie.rooms[0].name}"></th:block>
+                    </div>
+                </div>
+
                 <p class="movie-details" th:text="${movie.description}">
-                    A short description of the film goes here to give users a preview of the cinematic experience.
+                    Short movie description.
                 </p>
             </div>
 

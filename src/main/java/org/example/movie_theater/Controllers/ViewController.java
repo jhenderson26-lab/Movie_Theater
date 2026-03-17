@@ -202,7 +202,7 @@ public class ViewController {
         Long NewRoom = room.getId();
         roomService.initializeSeats(NewRoom, rows, seatsPerRow);
 
-        return "Movie/AllMovies";
+        return "redirect:/Rooms";
     }
 
     @GetMapping("/AddingMoviePage")
@@ -221,7 +221,7 @@ public class ViewController {
             movie.getRooms().add(room);
         }
         movieService.saveMovie(movie);
-        return "Movie/AllMovies";
+        return "redirect:/AllMovies";
     }
 
     @PostMapping("/Checkout")
