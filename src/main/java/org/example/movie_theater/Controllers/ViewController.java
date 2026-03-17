@@ -2,6 +2,7 @@
 package org.example.movie_theater.Controllers;
 
 import org.example.movie_theater.Entities.*;
+import org.example.movie_theater.Repos.MovieRepository;
 import org.example.movie_theater.Services.*;
 import org.example.movie_theater.User.User;
 import org.example.movie_theater.User.UserService;
@@ -257,16 +258,33 @@ public class ViewController {
         return "redirect:/Cart";
     }
 
-    @PostMapping("/EditingMoivePage")
+    @PostMapping("/EditingMoviePage")
     public String EditMoviePage(@RequestParam Long id, Model model) {
         model.addAttribute("Movielist", movieService.findMovieById(id));
         model.addAttribute("Roomlist", roomService.getAllRooms());
         return "Movie/EditMovie";
     }
 
-    @PutMapping("/UpdateMovie/{id}")
-    public String Updatedmove(){
+    @PostMapping("/UpdateMovie/{id}")
+    public String Updatedmovie(
+            @PathVariable Long id,
+        @ModelAttribute Movie updatedMovie
+    ) {
+        Movie movie = movieService.findMovieById(id);
 
-        return "Movie/AllMovies";
+
+        movie.setTitle(updatedMovie.getTitle());
+        movie.setReleaseYear(updatedMovie.getReleaseYear());
+        movie.setGenre(updatedMovie.getGenre());
+        movie.setDescription(updatedMovie.getDescription());
+        movie.setCost(updatedMovie.getCost());
+        movie.setShow_time_hour(updatedMovie.getShow_time_hour());
+        movie.setShow_time_minute(updatedMovie.getShow_time_minute());
+        movie.setRuntime_hour(updatedMovie.getRuntime_hour());
+        movie.setRuntime_minute(updatedMovie.getRuntime_minute());
+
+        movieService.saveMovie(movie);
+
+        return "redirect:/AllMovies";
     }
 }
