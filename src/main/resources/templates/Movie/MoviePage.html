@@ -6,10 +6,18 @@
     <title th:text="${movie?.title} + ' - RedTicket'">Movie Details</title>
     <link rel="stylesheet" th:href="@{/style.css}">
     <style>
-        /* RedTicket Dark Theme Aesthetic */
+        /* RedTicket Architectural/Blueprint Theme */
+        :root {
+            --bg-ultra-dark: #0a0a0a;
+            --module-bg: #141414;
+            --accent-red: #e50914;
+            --border-muted: #222;
+            --text-dim: #666;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #0f0f0f; /* Deep black/grey background */
+            background-color: var(--bg-ultra-dark);
             margin: 0;
             padding: 0;
             color: #ffffff;
@@ -18,152 +26,190 @@
             min-height: 100vh;
         }
 
-        .main-content {
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
             flex: 1;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            padding: 40px 20px;
         }
 
-        /* Dark Card Style from Image 1 */
-        .movie-card {
-            background: #1a1a1a; /* Dark grey card */
-            border-radius: 12px;
-            padding: 40px;
-            max-width: 700px;
-            width: 100%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid #2a2a2a;
+        /* Page Header matching Floor Plan */
+        .page-header {
+            margin-bottom: 40px;
+            border-left: 4px solid var(--accent-red);
+            padding-left: 20px;
         }
 
-        .genre-badge {
-            display: inline-block;
-            color: #e50914; /* Red accent */
-            font-size: 0.85rem;
+        .page-header h1 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1.5px;
+            margin: 0;
+        }
+
+        .header-id {
+            font-family: monospace;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        /* Technical Specification Module */
+        .spec-module {
+            background: var(--module-bg);
+            border: 1px solid var(--border-muted);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Top Module Bar */
+        .module-bar {
+            padding: 15px 30px;
+            background: #1c1c1c;
+            border-bottom: 1px solid var(--border-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .genre-tag {
+            font-family: monospace;
+            color: var(--accent-red);
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .runtime-tag {
+            font-size: 0.8rem;
+            color: var(--text-dim);
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-bottom: 10px;
         }
 
-        h1 {
-            font-size: 2.8rem;
+        /* Main Body with Vertical Accent */
+        .module-body {
+            padding: 40px;
+            border-left: 4px solid #333;
+            margin: 20px;
+            transition: border-color 0.4s ease;
+        }
+
+        .spec-module:hover .module-body {
+            border-left-color: var(--accent-red);
+        }
+
+        .synopsis-label {
+            font-size: 0.7rem;
             font-weight: 800;
-            margin: 0 0 15px 0;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-        }
-
-        .movie-meta {
-            display: flex;
-            gap: 15px;
-            color: #999;
-            font-size: 1rem;
-            margin-bottom: 30px;
-        }
-
-        .description-box {
-            border-top: 1px solid #333;
-            padding-top: 25px;
-            margin-bottom: 35px;
-        }
-
-        .description-box h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #ccc;
-            margin-bottom: 12px;
+            color: var(--text-dim);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            display: block;
         }
 
         .description-text {
-            line-height: 1.6;
-            color: #e0e0e0;
-            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #ccc;
+            font-size: 1.15rem;
+            margin: 0;
         }
 
-        /* Booking Section */
-        .booking-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 30px;
-            border-top: 1px solid #333;
+        /* Data Grid for Screening Info */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border-muted);
+            border-top: 1px solid var(--border-muted);
+            border-bottom: 1px solid var(--border-muted);
         }
 
-        .price-section {
+        .grid-item {
+            background: var(--module-bg);
+            padding: 25px 40px;
             display: flex;
             flex-direction: column;
         }
 
-        .price-label {
-            font-size: 0.75rem;
-            color: #888;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .price-value {
-            font-size: 2rem;
+        .item-label {
+            font-size: 0.65rem;
             font-weight: 800;
-            color: #ffffff;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 5px;
         }
 
-        /* Action Buttons from Screenshots */
-        .btn-group {
+        .item-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .item-value.red {
+            color: var(--accent-red);
+        }
+
+        /* Action Footer */
+        .module-footer {
+            padding: 30px 40px;
             display: flex;
-            gap: 15px;
+            justify-content: space-between;
             align-items: center;
         }
 
-        /* Red Primary Button */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+        }
+
         .btn-book {
-            background-color: #e50914;
-            color: white;
-            padding: 14px 28px;
-            border-radius: 8px;
+            background: var(--accent-red);
+            color: #fff;
             text-decoration: none;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: background 0.2s ease;
+            padding: 16px 35px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.2s;
             border: none;
             cursor: pointer;
-            text-align: center;
         }
 
         .btn-book:hover {
-            background-color: #b20710;
+            background: #b20710;
         }
 
-        /* Grey Secondary Button */
-        .btn-cancel {
-            background-color: #3d3d3d;
-            color: #ffffff;
-            padding: 14px 28px;
-            border-radius: 8px;
+        .btn-back {
+            background: #222;
+            color: #999;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: background 0.2s ease;
-            text-align: center;
+            padding: 16px 25px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: all 0.2s;
         }
 
-        .btn-cancel:hover {
-            background-color: #4f4f4f;
+        .btn-back:hover {
+            background: #333;
+            color: #fff;
         }
 
         /* Error state */
         .error-card {
             text-align: center;
-            padding: 60px;
-        }
-
-        /* Navbar aesthetic sync */
-        .main-header {
-            background-color: #000000;
-            border-bottom: 3px solid #e50914;
+            padding: 100px 40px;
+            border: 2px dashed var(--border-muted);
         }
     </style>
 </head>
@@ -171,42 +217,59 @@
 
 <div th:replace="~{fragments :: navbar}"></div>
 
-<div class="main-content">
-    <div th:if="${movie != null}" class="movie-card">
-        <div class="genre-badge" th:text="${movie.genre}">GENRE</div>
+<div class="container">
+    <div th:if="${movie != null}">
+        <header class="page-header">
+            <span class="header-id" th:text="'ASSET_ID: MOV-' + ${movie.id}">ASSET_ID: MOV-00</span>
+            <h1 th:text="${movie.title}">Movie Title</h1>
+        </header>
 
-        <h1 th:text="${movie.title}">Movie Title</h1>
-
-        <div class="movie-meta">
-            <span th:text="${#temporals.format(movie.releaseYear, 'yyyy')}">2024</span>
-            <span style="color: #e50914;">•</span>
-            <span th:text="${movie.runtime_hour} + 'h ' + ${movie.runtime_minute} + 'm'">2h 15m</span>
-        </div>
-
-        <div class="description-box">
-            <h3>Synopsis</h3>
-            <p class="description-text" th:text="${movie.description}">No description available.</p>
-        </div>
-
-        <div class="booking-footer">
-            <div class="price-section">
-                <span class="price-label">Price per Ticket</span>
-                <span class="price-value" th:text="'$' + ${#numbers.formatDecimal(movie.cost, 1, 2)}">$0.00</span>
+        <div class="spec-module">
+            <div class="module-bar">
+                <span class="genre-tag" th:text="${movie.genre}">Genre</span>
+                <span class="runtime-tag" th:text="${movie.runtime_hour + 'H ' + movie.runtime_minute + 'M'}">0H 00M</span>
             </div>
 
-            <div class="btn-group">
-                <a th:href="@{/AllMovies}" class="btn-cancel">Cancel</a>
-                <a th:href="@{/TicketBooking/{id}(id=${movie.id})}" class="btn-book">
-                    Book Tickets
-                </a>
+            <div class="module-body">
+                <span class="synopsis-label">Projector Narrative / Synopsis</span>
+                <p class="description-text" th:text="${movie.description}">No description available.</p>
+            </div>
+
+            <div class="info-grid">
+                <div class="grid-item">
+                    <span class="item-label">Scheduled Showtime</span>
+                    <span class="item-value red" th:text="${movie.show_time_hour + ':' + (movie.show_time_minute < 10 ? '0' + movie.show_time_minute : movie.show_time_minute)}">00:00</span>
+                </div>
+                <div class="grid-item">
+                    <span class="item-label">Assigned Location</span>
+                    <span class="item-value" th:if="${not #lists.isEmpty(movie.rooms)}" th:text="${movie.rooms[0].name}">Theater 1</span>
+                    <span class="item-value" th:unless="${not #lists.isEmpty(movie.rooms)}">TBD</span>
+                </div>
+                <div class="grid-item">
+                    <span class="item-label">Access Rate</span>
+                    <span class="item-value" th:text="'$' + ${#numbers.formatDecimal(movie.cost, 1, 2)}">$0.00</span>
+                </div>
+                <div class="grid-item">
+                    <span class="item-label">Production Year</span>
+                    <span class="item-value" th:text="${#temporals.format(movie.releaseYear, 'yyyy')}">2026</span>
+                </div>
+            </div>
+
+            <div class="module-footer">
+                <a th:href="@{/AllMovies}" class="btn-back">Return to Program</a>
+                <div class="btn-group">
+                    <a th:href="@{/TicketBooking/{id}(id=${movie.id})}" class="btn-book">
+                        Reserve Seating &raquo;
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
-    <div th:unless="${movie != null}" class="movie-card error-card">
-        <h2 style="color: #e50914;">Movie Not Found</h2>
-        <p style="color: #999;">We couldn't find the details for this movie. It may have been removed.</p>
-        <a th:href="@{/AllMovies}" class="btn-book" style="display: inline-block; margin-top: 20px;">Return to Catalog</a>
+    <div th:unless="${movie != null}" class="error-card">
+        <h2 style="color: var(--accent-red); font-weight: 900; text-transform: uppercase;">Asset Missing</h2>
+        <p style="color: var(--text-dim); margin-bottom: 30px;">The requested cinematic data is not available on the current server.</p>
+        <a th:href="@{/AllMovies}" class="btn-book">Back to Catalog</a>
     </div>
 </div>
 

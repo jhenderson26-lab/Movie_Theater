@@ -1,70 +1,259 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Seat - RedTicket</title>
     <link rel="stylesheet" th:href="@{/style.css}">
     <style>
-        .main-header {
+        /* RedTicket Dark Theater Theme */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #0f0f0f;
+            margin: 0;
+            padding: 0;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .theater-container {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid #2a2a2a;
+            text-align: center;
+        }
+
+        /* Movie Info Header */
+        .selection-header {
+            margin-bottom: 40px;
+        }
+
+        .selection-header h2 {
+            font-size: 2rem;
+            margin: 0 0 10px 0;
+            font-weight: 800;
+        }
+
+        .movie-runtime {
+            color: #e50914;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Cinematic Screen */
+        .screen-container {
+            perspective: 400px;
+            margin-bottom: 50px;
+        }
+
+        .screen {
+            background: #ffffff;
+            height: 8px;
+            width: 80%;
+            margin: 0 auto;
+            border-radius: 50%;
+            box-shadow: 0 3px 20px rgba(255, 255, 255, 0.7);
+            transform: rotateX(-30deg);
+        }
+
+        .screen-label {
+            color: #555;
+            font-size: 0.7rem;
+            letter-spacing: 5px;
+            margin-top: 15px;
+            text-transform: uppercase;
+        }
+
+        /* Seat Grid Styling */
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .seat-radio {
+            display: none;
+        }
+
+        .seat-label {
+            width: 55px;
+            height: 50px;
+            background: #2a2a2a;
+            border: 1px solid #3d3d3d;
+            border-radius: 8px 8px 15px 15px; /* Subtle seat shape */
             display: flex;
             align-items: center;
-            padding: 15px 40px;
-            border-bottom: 2px solid #a00000;
-            background-color: black;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #888;
+            transition: all 0.2s ease;
         }
-    </style>
-    <title>Select Your Seat</title>
-    <style>
-        body { font-family: -apple-system, sans-serif; background: #f2f2f7; text-align: center; padding-top: 50px; }
-        .theater-container { max-width: 600px; margin: auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .screen { background: #d1d1d6; height: 6px; width: 80%; margin: 20px auto 40px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .seat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; justify-items: center; }
 
-        .seat-radio { display: none; }
-        .seat-label {
-            width: 50px; height: 50px; background: #e5e5ea; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-weight: 600; transition: 0.2s;
+        .seat-label:hover:not(.occupied) {
+            border-color: #e50914;
+            color: #fff;
         }
-        .seat-radio:checked + .seat-label { background: #5856D6; color: white; transform: scale(1.1); }
-        .seat-label.occupied { background: #ff3b30; color: white; cursor: not-allowed; opacity: 0.6; }
+
+        /* Selected State */
+        .seat-radio:checked + .seat-label {
+            background: #e50914;
+            border-color: #ff1e27;
+            color: white;
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Occupied State */
+        .seat-label.occupied {
+            background: #111;
+            border-color: #111;
+            color: #333;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 30px 0;
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-box {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+
+        /* Action Buttons */
+        .btn-group {
+            margin-top: 40px;
+            display: flex;
+            gap: 15px;
+        }
 
         .confirm-btn {
-            margin-top: 40px; width: 100%; border: none; background: #5856D6;
-            color: white; padding: 15px; border-radius: 14px; font-weight: 600; font-size: 1.1em;
+            flex: 2;
+            background-color: #e50914;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .confirm-btn:hover {
+            background-color: #b20710;
+        }
+
+        .back-btn {
+            flex: 1;
+            background-color: #3d3d3d;
+            color: white;
+            text-decoration: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background-color: #4f4f4f;
         }
     </style>
 </head>
 <body>
+
 <div th:replace="~{fragments :: navbar}"></div>
 
-<div class="theater-container">
-    <h2 th:text="${isEditing} ? 'Change Seat: ' + ${movie.title} : 'Choose Seat: ' + ${movie.title}"></h2>
-    <div class="screen"></div>
-    <p style="color: #8e8e93; font-size: 0.8em; letter-spacing: 2px; margin-bottom: 30px;">SCREEN</p>
-
-    <form th:action="${isEditing} ? @{/UpdateTicket} : @{/AddToCart}" method="post">
-        <input type="hidden" name="movieId" th:value="${movie.id}" th:if="${!isEditing}">
-        <input type="hidden" name="ticketId" th:value="${existingTicketId}" th:if="${isEditing}">
-
-        <div class="seat-grid">
-            <div th:each="seat : ${seats}">
-                <input type="radio"
-                       th:id="${'seat-' + seat.id}"
-                       name="seatId"
-                       th:value="${seat.id}"
-                       class="seat-radio"
-                       th:disabled="${#lists.contains(occupiedSeatIds, seat.id)}">
-                <label th:for="${'seat-' + seat.id}"
-                      class="seat-label"
-                      th:classappend="${#lists.contains(occupiedSeatIds, seat.id)} ? 'occupied' : ''"
-                      th:text="${seat.seatNumber}">
-            </label>
+<div class="main-content">
+    <div class="theater-container">
+        <div class="selection-header">
+            <h2 th:text="${isEditing} ? 'Change Your Seat' : 'Select Your Seat'">Select Your Seat</h2>
+            <div class="movie-runtime">
+                <span th:text="${movie.title}">Movie Title</span>
+                •
+                <span th:text="${movie.runtime_hour} + 'h ' + ${movie.runtime_minute} + 'm'">1h 49m</span>
             </div>
         </div>
 
-        <button type="submit" class="confirm-btn"
-                th:text="${isEditing} ? 'Confirm Change' : 'Add to Cart'">
-        </button>
-    </form>
+        <div class="screen-container">
+            <div class="screen"></div>
+            <div class="screen-label">Screen</div>
+        </div>
+
+        <form th:action="${isEditing} ? @{/UpdateTicket} : @{/AddToCart}" method="post">
+            <input type="hidden" name="movieId" th:value="${movie.id}" th:if="${!isEditing}">
+            <input type="hidden" name="ticketId" th:value="${existingTicketId}" th:if="${isEditing}">
+            <input type="hidden" name="newSeatId" th:if="${isEditing}" id="newSeatId">
+
+            <div class="seat-grid">
+                <div th:each="seat : ${seats}">
+                    <input type="radio"
+                           th:id="${'seat-' + seat.id}"
+                           name="seatId"
+                           th:value="${seat.id}"
+                           class="seat-radio"
+                           th:disabled="${#lists.contains(occupiedSeatIds, seat.id)}"
+                           th:onclick="${isEditing} ? 'document.getElementById(\'newSeatId\').value=this.value' : ''">
+                    <label th:for="${'seat-' + seat.id}"
+                           class="seat-label"
+                           th:classappend="${#lists.contains(occupiedSeatIds, seat.id)} ? 'occupied' : ''"
+                           th:text="${seat.seatNumber}">
+                    </label>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item"><div class="legend-box" style="background: #2a2a2a; border: 1px solid #3d3d3d;"></div> Available</div>
+                <div class="legend-item"><div class="legend-box" style="background: #e50914;"></div> Selected</div>
+                <div class="legend-item"><div class="legend-box" style="background: #111;"></div> Occupied</div>
+            </div>
+
+            <div class="btn-group">
+                <a th:href="@{/MoviePage/{id}(id=${movie.id})}" class="back-btn">Cancel</a>
+                <button type="submit" class="confirm-btn"
+                        th:text="${isEditing} ? 'Confirm Change' : 'Add to Cart'">
+                    Add to Cart
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
+
 </body>
 </html>
