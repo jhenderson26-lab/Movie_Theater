@@ -1,80 +1,248 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - RedTicket</title>
     <link rel="stylesheet" th:href="@{/style.css}">
-    <!-- just have this for navbar styling, im not sure why the style.css won't link in some cases -->
     <style>
-        .main-header {
-            display: flex;
-            align-items: center;
-            padding: 15px 40px;
-            border-bottom: 2px solid #a00000;
-            background-color: black;
+        /* RedTicket Refined Theme */
+        :root {
+            --bg-ultra-dark: #0a0a0a;
+            --module-bg: #141414;
+            --accent-red: #e50914;
+            --border-muted: #222;
+            --text-dim: #888;
         }
-    </style>
 
-    <title>Your Cart</title>
-    <style>
-        body { font-family: -apple-system, sans-serif; background: #f2f2f7; padding: 40px; }
-        .cart-card { background: white; border-radius: 20px; padding: 30px; max-width: 800px; margin: auto; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #e5e5ea; }
-        .edit-link { color: #5856D6; text-decoration: none; font-weight: 600; font-size: 0.9em; }
-        .checkout-bar { margin-top: 30px; text-align: right; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-ultra-dark);
+            margin: 0;
+            padding: 0;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            flex: 1;
+        }
+
+        /* Simplified Header */
+        .page-header {
+            margin-bottom: 40px;
+            border-left: 4px solid var(--accent-red);
+            padding-left: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+
+        .header-sub {
+            color: var(--text-dim);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Cart Item Module */
+        .cart-item-module {
+            background: var(--module-bg);
+            border: 1px solid var(--border-muted);
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: flex;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .cart-item-module:hover {
+            border-color: #333;
+        }
+
+        .voucher-body {
+            flex: 1;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-identity h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin: 0 0 8px 0;
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .item-meta span b {
+            color: #fff;
+        }
+
+        /* Price & Remove Button */
+        .item-actions {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .price-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+        }
 
         .remove-btn {
-            background: none;
+            background: transparent;
             border: none;
-            color: #ff3b30; /* Apple Red */
-            font-weight: 600;
+            color: var(--accent-red);
+            padding: 0;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
             cursor: pointer;
-            margin-left: 15px;
-            font-size: 0.9rem;
+            text-align: right;
         }
 
         .remove-btn:hover {
             text-decoration: underline;
         }
 
+        /* Fixed Overlap Footer */
         .cart-footer {
             margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e5ea;
+            padding: 30px;
+            background: #111;
+            border: 1px solid var(--border-muted);
+            border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px; /* Ensures items stay apart */
+        }
+
+        .summary-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .total-label {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .total-price {
+            font-size: 2rem;
+            font-weight: 900;
+            margin: 0;
+        }
+
+        .confirm-btn {
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            white-space: nowrap; /* Prevents button text from wrapping */
+        }
+
+        .confirm-btn:hover {
+            background: #b20710;
+        }
+
+        .confirm-btn:active {
+            transform: scale(0.98);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            border: 2px dashed #222;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
+
 <div th:replace="~{fragments :: navbar}"></div>
 
-<div class="cart-container">
-    <h1>Your Cart</h1>
+<div class="container">
+    <header class="page-header">
+        <h1>Your <span style="color: var(--accent-red);">Order</span></h1>
+        <p class="header-sub">Review your tickets before checkout</p>
+    </header>
 
-    <div th:each="item : ${cartItems}" class="cart-item">
-        <div class="item-details">
-            <h3 th:text="${item.movie.title}">Movie Title</h3>
-            <p th:text="'Seat: ' + ${item.seat.seatNumber}">Seat A1</p>
+    <div th:if="${not #lists.isEmpty(cartItems)}">
+        <div th:each="item : ${cartItems}" class="cart-item-module">
+            <div class="voucher-body">
+                <div class="item-identity">
+                    <h2 th:text="${item.movie.title}">Movie Title</h2>
+                    <div class="item-meta">
+                        <span th:text="${item.movie.genre}">Genre</span>
+                        <span>•</span>
+                        <span>Seat: <b th:text="${item.seat.seatNumber}">A1</b></span>
+                        <span>•</span>
+                        <span>Time: <b th:text="${item.movie.show_time_hour + ':' + (item.movie.show_time_minute < 10 ? '0' + item.movie.show_time_minute : item.movie.show_time_minute)}">00:00</b></span>
+                    </div>
+                </div>
+
+                <div class="item-actions">
+                    <span class="price-text" th:text="'$' + ${#numbers.formatDecimal(item.cost, 1, 2)}">$0.00</span>
+                    <form th:action="@{/Cart/Remove/{id}(id=${item.id})}" method="post">
+                        <button type="submit" class="remove-btn">Remove</button>
+                    </form>
+                </div>
+            </div>
         </div>
 
-        <div class="item-actions">
-            <span class="price" th:text="'$' + ${item.cost}">$0.00</span>
+        <div class="cart-footer">
+            <div class="summary-info">
+                <span class="total-label">Total Price</span>
+                <h2 class="total-price" th:text="'$' + ${#numbers.formatDecimal(#aggregates.sum(cartItems.![cost]), 1, 2)}">$0.00</h2>
+            </div>
 
-            <form th:action="@{/Cart/Remove/{id}(id=${item.id})}" method="post" style="display:inline;">
-                <button type="submit" class="remove-btn">Remove</button>
+            <form th:action="@{/checkout}" method="post">
+                <th:block th:each="item : ${cartItems}">
+                    <input type="hidden" name="cartItemIds" th:value="${item.id}">
+                </th:block>
+                <button type="submit" class="confirm-btn">Confirm Purchase</button>
             </form>
         </div>
     </div>
 
-    <div th:if="${!#lists.isEmpty(cartItems)}" class="cart-footer">
-        <div class="total-section">
-            <span>Total:</span>
-            <h2 th:text="'$' + ${#aggregates.sum(cartItems.![cost])}">$0.00</h2>
-        </div>
-
-        <form th:action="@{/Checkout}" method="post">
-            <button type="submit" class="apple-btn">Confirm Purchase</button>
-        </form>
+    <div th:if="${#lists.isEmpty(cartItems)}" class="empty-state">
+        <p>Your cart is empty</p>
+        <a th:href="@{/AllMovies}" style="color: var(--accent-red); text-decoration: none; font-weight: bold; margin-top: 15px; display: inline-block;">Find a Movie</a>
     </div>
 </div>
 

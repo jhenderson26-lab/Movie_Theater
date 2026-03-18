@@ -1,134 +1,268 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<header th:fragment="navbar" class="apple-header">
+<header th:fragment="navbar" class="red-ticket-nav">
   <style>
-    /* Modern Reset for the Navbar */
-    .apple-header {
-        --bg-glass: rgba(10, 10, 10, 0.8);
-        --accent-red: #ff3b30;
-        --text-main: #f5f5f7;
-
-        background: var(--bg-glass);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 40px;
-        height: 64px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif;
-        position: fixed; /* Ensures it stays at the top */
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 9999;
+    /* REDTICKET SYSTEM NAV - V3.1 (CSS Ticket Integrated) */
+    :root {
+      --nav-height: 85px;
+      --nav-bg: #0a0a0a;
+      --nav-border: #222;
+      --accent-red: #e50914;
+      --text-dim: #888;
+      --text-bright: #ffffff;
+      --transition-main: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .logo-box img {
-        height: 40px;
-        transition: opacity 0.2s;
+    /* Navbar entry slide-down animation */
+    @keyframes navSlideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
-    .nav-items {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        list-style: none;
-        margin: 0;
-        padding: 0;
+    /* CRITICAL: Pushes page content down so it's not covered by fixed navbar */
+    body {
+      padding-top: var(--nav-height) !important;
+      margin: 0;
+    }
+
+    .red-ticket-nav {
+      background: var(--nav-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 60px;
+      height: var(--nav-height);
+      border-bottom: 2px solid var(--accent-red);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10000;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+
+      /* The animation on load */
+      animation: navSlideDown 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* --- NEW INTELLIGIBLE CSS TICKET LOGO --- */
+    .rt-logo-container {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+    }
+
+    .rt-logo-container:hover {
+      transform: scale(1.05);
+    }
+
+    /* Pure CSS portrait ticket */
+    .ticket-icon {
+      width: 38px;
+      height: 55px;
+      background-color: var(--accent-red);
+      border-radius: 3px;
+      position: relative;
+      overflow: hidden; /* Crucial for clean punch-outs */
+      filter: drop-shadow(0 0 5px rgba(229, 9, 20, 0.3));
+      transition: filter 0.3s ease;
+    }
+
+    .rt-logo-container:hover .ticket-icon {
+      filter: drop-shadow(0 0 12px rgba(229, 9, 20, 0.6));
+    }
+
+    /* Punches on the left edge - using pseudo elements overlaying nav-bg */
+    .ticket-icon::before,
+    .ticket-icon::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background-color: var(--nav-bg); /* Use nav bg to 'cut' the red */
+      border-radius: 50%;
+      left: -7px; /* Position half off the edge */
+      transition: background 0.4s ease; /* Match nav fade if used */
+    }
+
+    .ticket-icon::before { top: 12px; } /* Top punch */
+    .ticket-icon::after { bottom: 12px; } /* Bottom punch */
+
+    /* Small internal detail for realism (dashed perforation line) */
+    .perforation-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 14px;
+      border-right: 1px dashed rgba(0,0,0,0.5); /* dashed line on ticket itself */
+    }
+
+    /* Internal placeholder details */
+    .ticket-detail {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      font-family: monospace;
+      font-size: 8px;
+      color: rgba(0,0,0,0.6);
+      font-weight: 900;
+    }
+
+    /* --- Technical Text Treatment --- */
+    .rt-logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .rt-logo-text-red {
+      color: var(--text-bright);
+      font-weight: 900;
+      font-size: 1.6rem;
+      letter-spacing: -1.5px;
+      text-transform: uppercase;
+    }
+
+    .rt-logo-text-ticket {
+      color: var(--accent-red);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* --- Primary Navigation (unchanged) --- */
+    .nav-list {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
     }
 
     .nav-link {
-        color: var(--text-main);
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 500;
-        opacity: 0.8;
-        transition: opacity 0.2s, color 0.2s;
-        background: none;
-        border: none;
-        cursor: pointer;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 10px 0;
+      position: relative;
+      transition: var(--transition-main);
+      background: none;
+      border: none;
+      cursor: pointer;
     }
 
-    .nav-link:hover {
-        opacity: 1;
+    .nav-link:hover { color: var(--text-bright); }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent-red);
+      transition: var(--transition-main);
     }
 
-    /* The Admin Dropdown */
-    .admin-dropdown {
-        position: relative;
-        display: inline-block;
+    .nav-link:hover::after { width: 100%; }
+
+    /* --- Admin Dropdown (unchanged) --- */
+    .dropdown-container { position: relative; }
+
+    .manage-trigger {
+      background: #1a1a1a;
+      color: var(--accent-red);
+      border: 1px solid #333;
+      padding: 8px 18px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: var(--transition-main);
     }
 
-    .drop-btn {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        padding: 6px 16px;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        font-size: 13px;
-        cursor: pointer;
+    .manage-trigger:hover {
+      background: var(--accent-red);
+      color: white;
+      border-color: var(--accent-red);
+      box-shadow: 0 0 15px rgba(229, 9, 20, 0.3);
     }
 
-    .dropdown-menu {
-        display: none;
-        position: absolute;
-        top: 20px;
-        right: 0;
-        background: rgba(30, 30, 32, 0.95);
-        backdrop-filter: blur(15px);
-        min-width: 180px;
-        border-radius: 12px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-        border: 1px solid rgba(255,255,255,0.1);
-        padding: 8px;
+    .dropdown-panel {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 15px;
+      background: #141414;
+      min-width: 240px;
+      border: 1px solid #2a2a2a;
+      border-radius: 4px;
+      padding: 12px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.9);
+      transition: var(--transition-main);
     }
 
-    .dropdown-menu a, .dropdown-menu button {
-        display: block;
-        width: 100%;
-        padding: 10px 12px;
-        color: white;
-        text-decoration: none;
-        font-size: 13px;
-        text-align: left;
-        border-radius: 6px;
-        background: none;
-        border: none;
-        cursor: pointer;
+    .dropdown-container:hover .dropdown-panel {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
     }
 
-    .dropdown-menu a:hover, .dropdown-menu button:hover {
-        background: var(--accent-red);
+    .dropdown-panel a {
+      display: block;
+      padding: 12px 15px;
+      color: #999;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      border-radius: 2px;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
     }
 
-    .admin-dropdown:hover .dropdown-menu {
-        display: block;
+    .dropdown-panel a:hover {
+      background: #1a1a1a;
+      color: var(--accent-red);
+      border-left-color: var(--accent-red);
+      padding-left: 20px;
     }
 
-    /* Specialized Buttons */
-    .sign-out {
-        color: var(--accent-red);
-        font-weight: 600;
-    }
-
-    /* Quick Spacer for the rest of the page so content doesn't hide under the fixed navbar */
-    body { padding-top: 64px; margin: 0; background-color: #000; }
+    .btn-sign-out { color: var(--accent-red) !important; font-family: monospace; }
   </style>
 
-  <div class="logo-box">
-    <a th:href="@{/}"><img th:src="@{/Images/RedTicketLogo.png}" alt="Logo"></a>
-  </div>
+  <a th:href="@{/}" class="rt-logo-container">
+    <div class="ticket-icon">
+      <div class="perforation-line"></div>
+      <div class="ticket-detail">RT</div>
+    </div>
+
+    <div class="rt-logo-text">
+      <span class="rt-logo-text-red">RED</span>
+      <span class="rt-logo-text-ticket">TICKET</span>
+    </div>
+  </a>
 
   <nav>
-    <ul class="nav-items">
-
-      <li class="admin-dropdown" sec:authorize="hasRole('ADMIN')">
-        <button class="drop-btn">Manage ▾</button>
-        <div class="dropdown-menu">
-          <a th:href="@{/AddingMoviePage}">Create New Movie</a>
-          <a th:href="@{/AddingRoomPage}">Create New Room</a>
+    <ul class="nav-list">
+      <li class="dropdown-container" sec:authorize="hasRole('ADMIN')">
+        <button class="manage-trigger">ADMIN CONTROLS ▾</button>
+        <div class="dropdown-panel">
+          <a th:href="@{/AddingMoviePage}">+ Create_New_Movie</a>
+          <a th:href="@{/AddingRoomPage}">+ Create_New_Room</a>
         </div>
       </li>
 
@@ -136,7 +270,7 @@
       <li><a th:href="@{/Rooms}" class="nav-link">Theaters</a></li>
 
       <li sec:authorize="isAuthenticated()">
-        <a th:href="@{/History}" class="nav-link">Your Tickets</a>
+        <a th:href="@{/History}" class="nav-link">Tickets</a>
       </li>
 
       <li sec:authorize="isAuthenticated()">
@@ -144,11 +278,12 @@
       </li>
 
       <li sec:authorize="isAnonymous()">
-        <a th:href="@{/login}" class="nav-link">Sign In</a>
+        <a th:href="@{/login}" class="nav-link">Sign_In</a>
       </li>
+
       <li sec:authorize="isAuthenticated()">
         <form th:action="@{/logout}" method="post" style="display: inline;">
-          <button type="submit" class="nav-link sign-out">Sign Out</button>
+          <button type="submit" class="nav-link btn-sign-out">Sign_Out</button>
         </form>
       </li>
     </ul>

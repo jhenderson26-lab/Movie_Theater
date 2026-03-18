@@ -35,7 +35,11 @@ public class ViewController {
     // basic navigation endpoints
 
     @GetMapping("/")
-    public String Homepage() {
+    public String Homepage(Model model, Principal principal) {
+        model.addAttribute("Movielist", movieService.getAllMovies());
+        if (principal != null) {
+            model.addAttribute("username", principal.getName());
+        }
         return "index";
     }
 

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://thymeleaf.org" class="html-root">
+<html xmlns:th="http://www.thymeleaf.org" class="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title class="page-title">Red Ticket Cinema</title>
+    <title class="page-title">Home - Red Ticket Cinema</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
 
     <style>
-        /* CSS Variables - Matching your "Add New Movie" palette */
+        /* Shared Theme Variables - Confirmed with internal pages */
         :root {
             --bg-dark: #121212;
             --card-bg: #1c1c1c;
@@ -14,7 +15,8 @@
             --primary-red: #e50914;
             --text-main: #ffffff;
             --text-muted: #b3b3b3;
-            --transition: all 0.3s ease;
+            --border-muted: #333;
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
         body {
@@ -24,26 +26,58 @@
             margin: 0;
             padding: 0;
             line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll from animations */
         }
 
-        /* Layout Container */
+        /* Load Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(1deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(229, 9, 20, 0.2); }
+            50% { box-shadow: 0 0 25px rgba(229, 9, 20, 0.5); }
+            100% { box-shadow: 0 0 10px rgba(229, 9, 20, 0.2); }
+        }
+
+        /* Global Layout Container */
         .main-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 60px 20px;
         }
 
-        /* Hero Section Styling */
+        .animated-section {
+            opacity: 0;
+            animation: fadeInUp 0.8s forwards;
+            animation-delay: 0.2s;
+        }
+
+        /* Hero Section */
         .hero-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 50px;
-            margin-bottom: 80px;
+            margin-bottom: 120px;
         }
 
         .hero-content {
             flex: 1.2;
+            animation: fadeInUp 1s forwards;
+            animation-delay: 0.1s;
         }
 
         .hero-title {
@@ -51,11 +85,29 @@
             font-weight: 800;
             line-height: 1.1;
             margin-bottom: 24px;
-            letter-spacing: -1px;
+            letter-spacing: -2px;
+            text-transform: uppercase;
         }
 
         .text-red {
             color: var(--primary-red);
+            position: relative;
+        }
+
+        .text-red::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary-red);
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .hero-container:hover .text-red::after {
+            transform: scaleX(1);
         }
 
         .hero-subtitle {
@@ -63,33 +115,27 @@
             color: var(--text-muted);
             margin-bottom: 32px;
             max-width: 500px;
+            font-weight: 500;
         }
 
-        /* Visual Stack (Replacing the old layout) */
-
-        /* Visual Stack - Fixed for z-fighting and flickering */
+        /* Visual Stack with Float Animation */
         .hero-visual {
             flex: 1;
             position: relative;
             height: 450px;
-            /* Forces a clean stacking context for children */
             isolation: isolate;
+            animation: fadeInScale 1s forwards;
+            animation-delay: 0.3s;
         }
 
         .image-wrapper {
             position: absolute;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            /* Smooth transition without layout jumping */
-            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
-            box-shadow 0.4s ease,
-            filter 0.4s ease,
-            z-index 0s; /* Z-index should change instantly to prevent flickering */
-            /* Hardware acceleration to prevent visual artifacts */
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
             backface-visibility: hidden;
-            transform: translateZ(0);
         }
 
         .image-wrapper img {
@@ -98,12 +144,12 @@
             display: block;
         }
 
-        /* Positioned using coordinates instead of transforms to avoid hover conflicts */
         .main-img {
             width: 80%;
             z-index: 2;
             top: 0;
             right: 0;
+            animation: float 6s ease-in-out infinite;
         }
 
         .sub-img {
@@ -111,19 +157,106 @@
             z-index: 1;
             bottom: 10%;
             left: 0;
-            filter: grayscale(40%) brightness(0.8);
+            filter: grayscale(40%) brightness(0.6);
+            animation: float 8s ease-in-out infinite;
+            animation-delay: 1s;
         }
 
-        /* Responsive adjustment */
-        @media (max-width: 992px) {
-            .hero-visual {
-                height: 350px;
-                width: 100%;
-                max-width: 500px;
-                margin: 0 auto;
-            }
+        .hero-visual:hover .main-img {
+            transform: scale(1.05) translateY(-20px);
+            filter: brightness(1.1);
         }
-        /* Card Section - Matching the "Add Movie" modal look */
+
+        .hero-visual:hover .sub-img {
+            transform: scale(0.95) translateY(20px);
+            filter: grayscale(100%) brightness(0.4);
+        }
+
+        /* Content Sections */
+        .section-header {
+            margin-bottom: 40px;
+            border-left: 4px solid var(--primary-red);
+            padding-left: 15px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .section-label {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+        }
+
+        /* Now Showing Previews */
+        .showing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 80px;
+        }
+
+        /* Poster Style Preview Card */
+        .preview-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-muted);
+            border-radius: 8px;
+            padding: 20px;
+            text-decoration: none;
+            color: white;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            border-bottom: 3px solid transparent;
+        }
+
+        .preview-card:hover {
+            border-color: var(--primary-red);
+            transform: translateY(-5px);
+            border-bottom: 3px solid var(--primary-red);
+        }
+
+        .card-genre {
+            font-family: monospace;
+            color: var(--primary-red);
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            line-height: 1.2;
+        }
+
+        .card-meta {
+            font-size: 0.8rem;
+            color: #888;
+            font-weight: 600;
+        }
+
+        .meta-group { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+        .meta-group span { color: var(--primary-red); }
+
+        .card-footer {
+            margin-top: auto;
+            padding-top: 15px;
+            font-size: 0.8rem;
+            color: #eee;
+            font-weight: 700;
+            border-top: 1px solid var(--input-bg);
+        }
+
+        /* About Section Card */
         .glass-card {
             background-color: var(--card-bg);
             padding: 50px;
@@ -131,12 +264,7 @@
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.05);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .section-title {
-            font-size: 2.2rem;
-            margin-bottom: 20px;
-            font-weight: 700;
+            margin-bottom: 80px;
         }
 
         .section-text {
@@ -160,11 +288,13 @@
             text-decoration: none;
             font-weight: 700;
             transition: var(--transition);
+            animation: pulseGlow 2s infinite;
         }
 
         .btn-primary:hover {
             background-color: #ff1e27;
-            box-shadow: 0 0 20px rgba(229, 9, 20, 0.4);
+            animation: none;
+            box-shadow: 0 0 25px rgba(229, 9, 20, 0.6);
         }
 
         .btn-secondary {
@@ -181,6 +311,18 @@
             background-color: #3a3a3a;
         }
 
+        /* Footer */
+        .main-footer {
+            border-top: 2px solid var(--border-muted);
+            padding: 40px;
+            background: #000;
+            text-align: center;
+            color: #444;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
         /* Responsive Fixes */
         @media (max-width: 992px) {
             .hero-container {
@@ -189,24 +331,29 @@
             }
             .hero-subtitle { margin: 0 auto 32px; }
             .btn-group { justify-content: center; }
-            .hero-visual { height: 300px; margin-top: 40px; }
+            .hero-visual { height: 350px; margin: 40px auto 0; width: 100%; max-width: 500px; }
+            .showing-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 576px) {
+            .showing-grid { grid-template-columns: 1fr; }
+            .hero-visual { height: 280px; }
         }
     </style>
 </head>
-<body class="body-bg">
+<body>
 
 <div th:replace="~{fragments :: navbar}"></div>
 
 <main class="main-container">
     <section class="hero-container">
         <div class="hero-content">
-            <h1 class="hero-title">Your Front Row Seat to <span class="text-red">Magic</span></h1>
+            <h1 class="hero-title">Experience <span class="text-red">Magic</span> on the Big Screen</h1>
             <p class="hero-subtitle">
-                Experience the latest cinematic masterpieces with premium sound,
-                comfortable seating, and our signature red carpet service.
+                Premium comfort, spectacular sound, and the latest masterpieces. Your front-row seat to unforgettable moments is here.
             </p>
             <div class="btn-group">
-                <a href="/AllMovies" class="btn-primary">Get Tickets</a>
+                <a href="/AllMovies" class="btn-primary">Browse Showings</a>
                 <a href="/Rooms" class="btn-secondary">View Theaters</a>
             </div>
         </div>
@@ -221,17 +368,59 @@
         </div>
     </section>
 
-    <section class="info-section">
+    <section class="animated-section" id="showing-previews" style="animation-delay: 0.5s;">
+        <div class="section-header">
+            <span class="section-label">Current Program</span>
+            <h2 class="section-title">Now Showing Previews</h2>
+        </div>
+
+        <div th:if="${not #lists.isEmpty(featuredMovies)}" class="showing-grid">
+            <a th:each="movie : ${featuredMovies}" th:href="@{/MoviePage/{id}(id=${movie.id})}" class="preview-card">
+                <span class="card-genre" th:text="${movie.genre}">Genre</span>
+                <h3 class="card-title" th:text="${movie.title}">Movie Title</h3>
+
+                <div class="card-meta">
+                    <span th:text="${movie.releaseYear.year}">2026</span>
+                    <span style="color: var(--primary-red);">•</span>
+                    <span th:text="${movie.runtime_hour} + 'h ' + ${movie.runtime_minute} + 'm'">2h 15m</span>
+                </div>
+
+                <div class="card-footer" th:if="${not #lists.isEmpty(movie.rooms)}">
+                    <div class="meta-group">
+                        <span>🕒</span>
+                        <th:block th:text="${movie.show_time_hour + ':' + (movie.show_time_minute < 10 ? '0' + movie.show_time_minute : movie.show_time_minute)}">18:00</th:block>
+                    </div>
+                    <div class="meta-group">
+                        <span>🎬</span>
+                        <th:block th:text="${movie.rooms[0].name}">Theater 1</th:block>
+                    </div>
+                </div>
+                <div class="card-footer" th:unless="${not #lists.isEmpty(movie.rooms)}">
+                    Time TBD
+                </div>
+            </a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(featuredMovies)}" class="empty-state">
+            <p>[ System Idle: No projections active in featured roster ]</p>
+            <a href="/AllMovies" style="color: var(--primary-red); text-decoration: none; font-weight: bold;">View Full Catalog</a>
+        </div>
+    </section>
+
+    <section class="animated-section info-section" style="animation-delay: 0.8s;">
         <div class="glass-card">
-            <h2 class="section-title">About Red Ticket Cinema</h2>
+            <h2 class="section-title">A New Era of <span class="text-red">Cinema</span></h2>
             <p class="section-text">
-                Red Ticket Cinema brings the golden age of movies into the modern era.
-                From state-of-the-art 4K projection to our gourmet concession stand,
-                every detail is designed to make your visit unforgettable.
+                Red Ticket Cinema redefines your night out. From immersive 4K projection to our ultra-premium reclining seats, we provide an unforgettable experience designed around you.
             </p>
+            <a href="/Rooms" class="btn-secondary" style="margin-top: 30px; display: inline-block;">Learn About Our Theaters</a>
         </div>
     </section>
 </main>
+
+<footer class="main-footer">
+    Red Ticket Cinema &copy; 2026 • Secure System Administration Terminal
+</footer>
 
 </body>
 </html>

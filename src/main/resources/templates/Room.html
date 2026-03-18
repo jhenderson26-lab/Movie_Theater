@@ -1,68 +1,222 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinema Floor Plan - RedTicket Admin</title>
     <link rel="stylesheet" th:href="@{/style.css}">
     <style>
-        .main-header {
-            display: flex;
-            align-items: center;
-            padding: 15px 40px;
-            border-bottom: 2px solid #a00000;
-            background-color: black;
+        /* RedTicket Floor Plan Theme */
+        :root {
+            --bg-ultra-dark: #0a0a0a;
+            --module-bg: #141414;
+            --accent-red: #e50914;
+            --border-muted: #222;
+            --text-dim: #555;
         }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-ultra-dark);
+            margin: 0;
+            padding: 0;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 60px;
+            border-left: 4px solid var(--accent-red);
+            padding-left: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+
+        /* Admin Maintenance Bar */
+        .admin-maintenance-bar {
+            background: #1c1c1c;
+            border-bottom: 1px solid var(--border-muted);
+            padding: 8px 15px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .admin-label {
+            font-family: monospace;
+            font-size: 0.65rem;
+            color: #444;
+            margin-right: auto;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .admin-btn {
+            font-family: monospace;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            color: #fff;
+        }
+
+        .btn-edit { background: #333; }
+        .btn-edit:hover { background: #444; color: var(--accent-red); }
+        .btn-delete { background: #b20710; }
+        .btn-delete:hover { background: var(--accent-red); box-shadow: 0 0 10px rgba(229, 9, 20, 0.3); }
+
+        /* The Floor Plan Grid (2 Columns) */
+        .floor-plan-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        /* Theater "Room" Module */
+        .theater-room {
+            background: var(--module-bg);
+            border: 2px solid var(--border-muted);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .theater-room:hover {
+            border-color: var(--accent-red);
+        }
+
+        .room-header {
+            padding: 20px;
+            background: #1c1c1c;
+            border-bottom: 1px solid var(--border-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .room-id { color: var(--accent-red); font-family: monospace; font-weight: 800; }
+        .room-name { font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Program List */
+        .room-schedule { padding: 25px; flex: 1; }
+        .schedule-title { font-size: 0.7rem; color: var(--text-dim); font-weight: 800; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 2px; }
+
+        .movie-slot {
+            display: block;
+            text-decoration: none;
+            background: #1a1a1a;
+            border-left: 3px solid #333;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: 0.2s;
+        }
+
+        .movie-slot:hover { background: #222; border-left-color: var(--accent-red); }
+
+        .slot-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .slot-title { color: #fff; font-weight: 600; font-size: 1rem; }
+        .slot-time { color: var(--accent-red); font-weight: 800; font-size: 0.9rem; }
+
+        .slot-meta { font-size: 0.75rem; color: #777; display: flex; gap: 10px; }
+
+        /* Footer */
+        .room-footer {
+            padding: 15px 25px;
+            font-size: 0.7rem;
+            color: #444;
+            text-transform: uppercase;
+            border-top: 1px solid #1c1c1c;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .no-screenings { color: #333; font-size: 0.9rem; text-align: center; padding: 40px 0; }
+
+        @media (max-width: 768px) { .floor-plan-grid { grid-template-columns: 1fr; } }
     </style>
-    <title>Movie Theater - Theaters</title>
 </head>
 <body>
+
 <div th:replace="~{fragments :: navbar}"></div>
 
-<div class="rooms-container">
-    <h1 class="title">Theaters</h1>
+<div class="container">
+    <header class="page-header">
+        <h1>Cinema <span style="color: #fff;">Complex</span> <span style="color: var(--accent-red);">Floor Plan</span></h1>
+        <p style="color: var(--text-dim); margin-top: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;">Facility Management • Level 1</p>
+    </header>
 
-    <div class="grid-wrapper">
-        <div th:each="room : ${Roomlist}" class="room-card-wrapper">
+    <div class="floor-plan-grid">
+        <div th:each="room, iterStat : ${Roomlist}" class="theater-room">
 
-            <div class="room-card">
-                <div class="room-info-section">
-                    <a th:href="@{/}" class="room-main-link">
-                        <h2 th:text="'Theater: ' + ${room.getName()}">Theater: #</h2>
-                        <small class="click-hint">View Seats &raquo;</small>
-                    </a>
-                    <div sec:authorize="hasRole('ADMIN')">
-                        <form th:action="@{/EditPageRoom}" method="post">
-                            <input type="hidden" name="id" th:value="${room.id}">
-                            <button>edit</button>
-                        </form>
-                        <form action="#" th:action="@{/}" method="post">
-                            <button>X</button>
-                        </form>
-                    </div>
-                </div>
+            <div sec:authorize="hasRole('ADMIN')" class="admin-maintenance-bar">
+                <span class="admin-label">Facility_Control_v2.0</span>
 
-                <hr class="card-divider">
+                <form th:action="@{/EditPageRoom}" method="post" style="margin: 0;">
+                    <input type="hidden" name="id" th:value="${room.id}">
+                    <button type="submit" class="admin-btn btn-edit">Edit_Facility</button>
+                </form>
 
-                <div class="movies-list">
-                    <p class="section-label">Now Playing:</p>
-                    <div th:each="movie : ${room.movies}" class="movie-entry">
-                        <a th:href="@{/MoviePage/{id}(id=${movie.id})}" class="movie-page-link">
-                            <p class="movie-name" th:text="${movie.title}">Movie Name</p>
-                            <p class="showtime">
+                <form th:action="@{/DeleteRoom}" method="post" style="margin: 0;"> <input type="hidden" name="id" th:value="${room.id}">
+                    <button type="submit" class="admin-btn btn-delete">X</button>
+                </form>
+            </div>
+
+            <div class="room-header">
+                <span class="room-id" th:text="${'TH-' + (iterStat.index + 1)}">TH-1</span>
+                <span class="room-name" th:text="${room.name}">Theater Name</span>
+            </div>
+
+            <div class="room-schedule">
+                <p class="schedule-title">Current Program</p>
+
+                <div th:each="movie : ${room.movies}">
+                    <a th:href="@{/MoviePage/{id}(id=${movie.id})}" class="movie-slot">
+                        <div class="slot-header">
+                            <span class="slot-title" th:text="${movie.title}">Movie Title</span>
+                            <span class="slot-time">
                                 <span th:text="${movie.show_time_hour}">12</span>:<span th:text="${#numbers.formatInteger(movie.show_time_minute, 2)}">00</span>
-                            </p>
-                        </a>
-
-                    </div>
-
-                    <p th:if="${#lists.isEmpty(room.movies)}" class="no-movies">
-                        No movies scheduled.
-                    </p>
+                            </span>
+                        </div>
+                        <div class="slot-meta">
+                            <span th:text="${movie.genre}">Genre</span>
+                            <span>•</span>
+                            <span th:text="${movie.runtime_hour + 'h ' + movie.runtime_minute + 'm'}">1h 45m</span>
+                        </div>
+                    </a>
                 </div>
 
+                <div th:if="${#lists.isEmpty(room.movies)}" class="no-screenings">
+                    [ MODULE_IDLE: NO ACTIVE STREAM ]
+                </div>
+            </div>
+
+            <div class="room-footer">
+                <span>Unit Capacity: <th:block th:text="${room.capacity}"></th:block></span>
+                <span th:if="${not #lists.isEmpty(room.movies)}" style="color: var(--accent-red); font-weight: bold;">● ACTIVE</span>
             </div>
         </div>
     </div>
-
 </div>
 
 </body>
