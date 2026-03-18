@@ -185,12 +185,30 @@ public class ViewController {
         return "Making/NewRoom";
     }
 
+    public void addingSeat4Room(Room room){
+        int capacity = room.getCapacity();
+        int seatsPerRow = 1;
+        int rows = capacity;
+
+
+        for (int i = (int) Math.sqrt(capacity); i >= 1; i--) {
+            if (capacity % i == 0) {
+                seatsPerRow = i;
+                rows = capacity / i;
+                break;
+            }
+        }
+        roomService.initializeSeats(room.getId(), rows, seatsPerRow);
+    }
+
+
     @PostMapping("/AddedNewRoom")
     public String AddedRoom(@ModelAttribute Room room, @RequestParam(value = "movieIds", required = false) List<Long> movieIds) {
         if (room.getName() == null || room.getName().isEmpty()) {
             return "redirect:/AddingRoomPage";
         }
         room = roomService.addRoomR(room);
+
 
         if (movieIds != null && !movieIds.isEmpty()) {
             for (Long id : movieIds) {
@@ -201,18 +219,8 @@ public class ViewController {
                 }
             }
         }
+        addingSeat4Room(room);
 
-
-        int seatsPerRow = (int) Math.sqrt(room.getCapacity());
-        int rows = (int) Math.ceil((double) room.getCapacity() / seatsPerRow);
-
-        if (rows <= seatsPerRow) {
-
-            seatsPerRow--;
-            rows = (int) Math.ceil((double) room.getCapacity() / seatsPerRow);
-        }
-
-        roomService.initializeSeats(room.getId(), rows, seatsPerRow);
 
         return "redirect:/Rooms";
     }
@@ -303,14 +311,29 @@ public class ViewController {
             @ModelAttribute Room updatedRoom,
             @RequestParam(value = "movieIds", required = false) List<Long> movieIds) {
 
+
         Room room = roomService.findRoomById(id);
+        Integer setBack = updatedRoom.getCapacity();
+        if (room.getCapacity() > updatedRoom.getCapacity()){
+            for (long i = (updatedRoom.getCapacity() + 1); i <= room.getCapacity(); i++) {
+                System.out.println(i);
+                roomService.deletingRoomseats(i, id);
+            }
+            updatedRoom.setCapacity(updatedRoom.getCapacity());
+        } else if (room.getCapacity() < updatedRoom.getCapacity()) {
+            updatedRoom.setCapacity(updatedRoom.getCapacity() - room.getCapacity());
+            addingSeat4Room(updatedRoom);
+            updatedRoom.setCapacity(setBack);
+        }
         room.setName(updatedRoom.getName());
         room.setCapacity(updatedRoom.getCapacity());
+
 
         for (Movie movie : room.getMovies()) {
             movie.getRooms().remove(room);
         }
         room.getMovies().clear();
+
 
         if (movieIds != null) {
             List<Movie> selectedMovies = movieService.findAllById(movieIds);
@@ -320,9 +343,11 @@ public class ViewController {
             }
         }
 
+
         roomService.addRoom(room);
         return "Room";
     }
+
 
 
 }

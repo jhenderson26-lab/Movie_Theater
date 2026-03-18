@@ -49,4 +49,9 @@ public class RoomService {
     public Room addRoomR(Room room) {
         return roomRepository.save(room);
     }
+
+    public void deletingRoomseats(Long seatId, Long roomId){
+        roomRepository.deleteBySeatIdAndRoomId(seatId, roomId);
+    }
+
 }
