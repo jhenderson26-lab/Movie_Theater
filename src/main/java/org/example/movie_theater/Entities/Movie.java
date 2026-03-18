@@ -43,13 +43,16 @@ public class Movie {
     private Integer runtime_minute;
     private Integer runtime_hour;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "movie_rooms",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "room_id")
     )
     private List<Room> rooms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Ticket> tickets = new ArrayList<>();
 
     public Movie(String title, LocalDate releaseYear, String genre, String description, Double cost, Integer show_time_hour, Integer show_time_minute, Integer runtime_minute, Integer runtime_hour) {
         this.title = title;
