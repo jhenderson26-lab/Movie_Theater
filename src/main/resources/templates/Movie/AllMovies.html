@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head th:replace="~{fragments :: common-head}">
+    <title></title>
+</head>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -217,7 +220,7 @@
                     <button type="submit" class="admin-btn btn-edit">Edit_Movie</button>
                 </form>
 
-                <form th:action="@{/DeleteMovie}" method="post" style="margin: 0;">
+                <form th:action="@{/DeleteMovie}" th:method="delete" style="margin: 0;">
                     <input type="hidden" name="id" th:value="${movie.id}">
                     <button type="submit" class="admin-btn btn-delete">X</button>
                 </form>
