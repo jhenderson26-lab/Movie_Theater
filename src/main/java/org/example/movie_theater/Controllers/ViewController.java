@@ -220,23 +220,14 @@ public class ViewController {
     }
 
     @PostMapping("/AddedNewMovie")
-    public String AddedMovie(
-            @RequestParam(value = "movieIds", required = false) List<Long> movieIds,
-            @RequestParam(value = "room", required = false) Long roomId) {
+    public String AddedMovie(@ModelAttribute("movie") Movie movie,
+                             @RequestParam("room") Long roomId) {
 
-        if (movieIds == null || movieIds.isEmpty()) {
-            return "redirect:/NewMovie";
+        Room selectedRoom = roomService.findRoomById(roomId);
+        if (selectedRoom != null) {
+            movie.getRooms().add(selectedRoom);
         }
-
-        Room room = (roomId != null) ? roomService.findRoomById(roomId) : null;
-
-        for (Long movieId : movieIds) {
-            Movie movie = movieService.findMovieById(movieId);
-            if (room != null) {
-                movie.getRooms().add(room);
-            }
-            movieService.saveMovie(movie);
-        }
+        movieService.saveMovie(movie);
 
         return "redirect:/AllMovies";
     }
