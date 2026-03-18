@@ -36,5 +36,8 @@ public class MovieService {
     }
 
 
-
+    public List<Movie> findAllById(List<Long> movieIds) {
+        List<Movie> movies = movieRepository.findAllById(movieIds);
+        return movies;
+    }
 }

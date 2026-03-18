@@ -182,15 +182,22 @@ public class ViewController {
     }
 
     @PostMapping("/AddedNewRoom")
-    public String AddedRoom(@ModelAttribute Room room, @RequestParam(value = "movies", required = false) Long movieId) {
+    public String AddedRoom(@ModelAttribute Room room, @RequestParam(value = "movieIds", required = false) List<Long> movieIds) {
         if (room.getName() == null || room.getName().isEmpty()) {
             return "redirect:/AddingRoomPage";
         }
-        if (movieId != null) {
-            Movie movie = movieService.findMovieById(movieId);
-            movie.getRooms().add(room);
+        room = roomService.addRoomR(room);
+
+        if (movieIds != null && !movieIds.isEmpty()) {
+            for (Long id : movieIds) {
+                Movie movie = movieService.findMovieById(id);
+                if (movie != null) {
+                    movie.getRooms().add(room);
+                    movieService.saveMovie(movie);
+                }
+            }
         }
-        roomService.addRoom(room);
+
 
         int seatsPerRow = (int) Math.sqrt(room.getCapacity());
         int rows = (int) Math.ceil((double) room.getCapacity() / seatsPerRow);
@@ -200,8 +207,8 @@ public class ViewController {
             seatsPerRow--;
             rows = (int) Math.ceil((double) room.getCapacity() / seatsPerRow);
         }
-        Long NewRoom = room.getId();
-        roomService.initializeSeats(NewRoom, rows, seatsPerRow);
+
+        roomService.initializeSeats(room.getId(), rows, seatsPerRow);
 
         return "redirect:/Rooms";
     }
@@ -287,4 +294,40 @@ public class ViewController {
 
         return "redirect:/AllMovies";
     }
+
+    @PostMapping("/EditPageRoom")
+    public String EditingPageRoom(@RequestParam Long id, Model model){
+        model.addAttribute("Movielist", movieService.getAllMovies());
+        model.addAttribute("Roomlist", roomService.findRoomById(id));
+        return "EditRoom";
+    }
+
+    @PutMapping("/UpdateRoom/{id}")
+    public String EditedRoom(
+            @PathVariable Long id,
+            @ModelAttribute Room updatedRoom,
+            @RequestParam(value = "movieIds", required = false) List<Long> movieIds) {
+
+        Room room = roomService.findRoomById(id);
+        room.setName(updatedRoom.getName());
+        room.setCapacity(updatedRoom.getCapacity());
+
+        for (Movie movie : room.getMovies()) {
+            movie.getRooms().remove(room);
+        }
+        room.getMovies().clear();
+
+        if (movieIds != null) {
+            List<Movie> selectedMovies = movieService.findAllById(movieIds);
+            for (Movie movie : selectedMovies) {
+                room.getMovies().add(movie);
+                movie.getRooms().add(room);
+            }
+        }
+
+        roomService.addRoom(room);
+        return "Room";
+    }
+
+
 }

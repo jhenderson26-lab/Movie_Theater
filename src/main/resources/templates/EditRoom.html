@@ -1,0 +1,21 @@
+
+<form th:action="@{/UpdateRoom/{id}(id=${Roomlist.id})}" th:method="put" th:object="${Roomlist}">
+
+    <label>Room Name:</label>
+    <input type="text" th:field="*{name}" required/>
+
+    <label>Seats:</label>
+    <input type="number" th:field="*{capacity}" min="1" required/>
+
+    <label>Assign Movies:</label>
+    <select name="movieIds" id="movieSelect" multiple="multiple">
+        <option th:each="movie : ${Movielist}"
+                th:value="${movie.id}"
+                th:text="${movie.title}"
+                th:selected="${#lists.contains(Roomlist.movies.![id], movie.id)}">
+        </option>
+    </select>
+
+    <button type="submit">Update Room</button>
+</form>
+

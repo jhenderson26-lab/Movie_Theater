@@ -29,22 +29,21 @@
                         <h2 th:text="'Theater: ' + ${room.getName()}">Theater: #</h2>
                         <small class="click-hint">View Seats &raquo;</small>
                     </a>
+                    <div sec:authorize="hasRole('ADMIN')">
+                        <form th:action="@{/EditPageRoom}" method="post">
+                            <input type="hidden" name="id" th:value="${room.id}">
+                            <button>edit</button>
+                        </form>
+                        <form action="#" th:action="@{/}" method="post">
+                            <button>X</button>
+                        </form>
+                    </div>
                 </div>
 
                 <hr class="card-divider">
 
                 <div class="movies-list">
                     <p class="section-label">Now Playing:</p>
-                    <div sec:authorize="hasRole('ADMIN')">
-                        <form action="#" th:action="@{/}" method="post">
-                            <button>edit</button>
-                        </form>
-                    </div>
-                    <div sec:authorize="hasRole('ADMIN')">
-                        <form action="#" th:action="@{/}" method="post">
-                            <button>X</button>
-                        </form>
-                    </div>
                     <div th:each="movie : ${room.movies}" class="movie-entry">
                         <a th:href="@{/MoviePage/{id}(id=${movie.id})}" class="movie-page-link">
                             <p class="movie-name" th:text="${movie.title}">Movie Name</p>
