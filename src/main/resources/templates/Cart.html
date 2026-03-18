@@ -231,7 +231,7 @@
                 <h2 class="total-price" th:text="'$' + ${#numbers.formatDecimal(#aggregates.sum(cartItems.![cost]), 1, 2)}">$0.00</h2>
             </div>
 
-            <form th:action="@{/checkout}" method="post">
+            <form th:action="@{/History}" method="post">
                 <th:block th:each="item : ${cartItems}">
                     <input type="hidden" name="cartItemIds" th:value="${item.id}">
                 </th:block>
