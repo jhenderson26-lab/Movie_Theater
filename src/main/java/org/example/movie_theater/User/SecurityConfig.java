@@ -19,6 +19,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/AllMovies",
+                                "/MoviePage/{movieId}",
+                                "/Rooms",
                                 "/signup",
                                 "/login",
                                 "/resources/**",

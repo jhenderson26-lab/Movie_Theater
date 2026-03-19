@@ -1,429 +1,190 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" class="html-root">
+<body class="site-entry">
 <head th:replace="~{fragments :: common-head}">
-    <title></title>
+    <title>Home - Red Ticket Cinema</title>
 </head>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title class="page-title">Home - Red Ticket Cinema</title>
-    <link rel="stylesheet" th:href="@{/style.css}">
-
-    <style>
-        /* Shared Theme Variables - Confirmed with internal pages */
-        :root {
-            --bg-dark: #121212;
-            --card-bg: #1c1c1c;
-            --input-bg: #2a2a2a;
-            --primary-red: #e50914;
-            --text-main: #ffffff;
-            --text-muted: #b3b3b3;
-            --border-muted: #333;
-            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            overflow-x: hidden; /* Prevent horizontal scroll from animations */
-        }
-
-        /* Load Animations */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(1deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 10px rgba(229, 9, 20, 0.2); }
-            50% { box-shadow: 0 0 25px rgba(229, 9, 20, 0.5); }
-            100% { box-shadow: 0 0 10px rgba(229, 9, 20, 0.2); }
-        }
-
-        /* Global Layout Container */
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 60px 20px;
-        }
-
-        .animated-section {
-            opacity: 0;
-            animation: fadeInUp 0.8s forwards;
-            animation-delay: 0.2s;
-        }
-
-        /* Hero Section */
-        .hero-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 50px;
-            margin-bottom: 120px;
-        }
-
-        .hero-content {
-            flex: 1.2;
-            animation: fadeInUp 1s forwards;
-            animation-delay: 0.1s;
-        }
-
-        .hero-title {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 24px;
-            letter-spacing: -2px;
-            text-transform: uppercase;
-        }
-
-        .text-red {
-            color: var(--primary-red);
-            position: relative;
-        }
-
-        .text-red::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--primary-red);
-            transform: scaleX(0);
-            transition: var(--transition);
-        }
-
-        .hero-container:hover .text-red::after {
-            transform: scaleX(1);
-        }
-
-        .hero-subtitle {
-            font-size: 1.25rem;
-            color: var(--text-muted);
-            margin-bottom: 32px;
-            max-width: 500px;
-            font-weight: 500;
-        }
-
-        /* Visual Stack with Float Animation */
-        .hero-visual {
-            flex: 1;
-            position: relative;
-            height: 450px;
-            isolation: isolate;
-            animation: fadeInScale 1s forwards;
-            animation-delay: 0.3s;
-        }
-
-        .image-wrapper {
-            position: absolute;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: var(--transition);
-            backface-visibility: hidden;
-        }
-
-        .image-wrapper img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .main-img {
-            width: 80%;
-            z-index: 2;
-            top: 0;
-            right: 0;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .sub-img {
-            width: 70%;
-            z-index: 1;
-            bottom: 10%;
-            left: 0;
-            filter: grayscale(40%) brightness(0.6);
-            animation: float 8s ease-in-out infinite;
-            animation-delay: 1s;
-        }
-
-        .hero-visual:hover .main-img {
-            transform: scale(1.05) translateY(-20px);
-            filter: brightness(1.1);
-        }
-
-        .hero-visual:hover .sub-img {
-            transform: scale(0.95) translateY(20px);
-            filter: grayscale(100%) brightness(0.4);
-        }
-
-        /* Content Sections */
-        .section-header {
-            margin-bottom: 40px;
-            border-left: 4px solid var(--primary-red);
-            padding-left: 15px;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            margin: 0;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-
-        .section-label {
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.8rem;
-        }
-
-        /* Now Showing Previews */
-        .showing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
-            margin-bottom: 80px;
-        }
-
-        /* Poster Style Preview Card */
-        .preview-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-muted);
-            border-radius: 8px;
-            padding: 20px;
-            text-decoration: none;
-            color: white;
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            border-bottom: 3px solid transparent;
-        }
-
-        .preview-card:hover {
-            border-color: var(--primary-red);
-            transform: translateY(-5px);
-            border-bottom: 3px solid var(--primary-red);
-        }
-
-        .card-genre {
-            font-family: monospace;
-            color: var(--primary-red);
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 0 0 10px 0;
-            line-height: 1.2;
-        }
-
-        .card-meta {
-            font-size: 0.8rem;
-            color: #888;
-            font-weight: 600;
-        }
-
-        .meta-group { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
-        .meta-group span { color: var(--primary-red); }
-
-        .card-footer {
-            margin-top: auto;
-            padding-top: 15px;
-            font-size: 0.8rem;
-            color: #eee;
-            font-weight: 700;
-            border-top: 1px solid var(--input-bg);
-        }
-
-        /* About Section Card */
-        .glass-card {
-            background-color: var(--card-bg);
-            padding: 50px;
-            border-radius: 20px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            margin-bottom: 80px;
-        }
-
-        .section-text {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            max-width: 750px;
-            margin: 0 auto;
-        }
-
-        /* Button Styling */
-        .btn-group {
-            display: flex;
-            gap: 16px;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-red);
-            color: white;
-            padding: 14px 32px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: var(--transition);
-            animation: pulseGlow 2s infinite;
-        }
-
-        .btn-primary:hover {
-            background-color: #ff1e27;
-            animation: none;
-            box-shadow: 0 0 25px rgba(229, 9, 20, 0.6);
-        }
-
-        .btn-secondary {
-            background-color: var(--input-bg);
-            color: white;
-            padding: 14px 32px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .btn-secondary:hover {
-            background-color: #3a3a3a;
-        }
-
-        /* Footer */
-        .main-footer {
-            border-top: 2px solid var(--border-muted);
-            padding: 40px;
-            background: #000;
-            text-align: center;
-            color: #444;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-
-        /* Responsive Fixes */
-        @media (max-width: 992px) {
-            .hero-container {
-                flex-direction: column;
-                text-align: center;
-            }
-            .hero-subtitle { margin: 0 auto 32px; }
-            .btn-group { justify-content: center; }
-            .hero-visual { height: 350px; margin: 40px auto 0; width: 100%; max-width: 500px; }
-            .showing-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 576px) {
-            .showing-grid { grid-template-columns: 1fr; }
-            .hero-visual { height: 280px; }
-        }
-    </style>
-</head>
-<body>
-
 <div th:replace="~{fragments :: navbar}"></div>
 
+<div class="tech-grid-overlay"></div>
+
 <main class="main-container">
-    <section class="hero-container">
+
+    <section class="hero-container" id="hero">
         <div class="hero-content">
-            <h1 class="hero-title">Experience <span class="text-red">Magic</span> on the Big Screen</h1>
+            <div class="status-tag">
+                <span class="status-dot"></span> SYSTEM_READY // SESSION_2026
+            </div>
+            <h1 class="hero-title">Experience <span class="text-accent">Magic</span> <br>On The Big Screen</h1>
             <p class="hero-subtitle">
-                Premium comfort, spectacular sound, and the latest masterpieces. Your front-row seat to unforgettable moments is here.
+                Deploying ultra-premium 4K optics and industrial-grade soundscapes.
+                The cinematic uplink is established.
             </p>
             <div class="btn-group">
-                <a href="/AllMovies" class="btn-primary">Browse Showings</a>
-                <a href="/Rooms" class="btn-secondary">View Theaters</a>
+                <a href="/AllMovies" class="btn-tech btn-filled">BROWSE_SHOWINGS</a>
+                <a href="/Rooms" class="btn-tech btn-outline">VIEW_THEATERS</a>
             </div>
         </div>
 
-        <div class="hero-visual">
-            <div class="image-wrapper sub-img">
+        <div class="hero-visual-stack" id="parallax-scene">
+            <div class="layer layer-1 floating-slow">
                 <img src="Images/Seats.png" alt="Cinema Seating">
             </div>
-            <div class="image-wrapper main-img">
-                <img src="Images/Audience.png" alt="Audience in 3D glasses">
+            <div class="layer layer-2 floating-fast">
+                <img src="Images/Audience.png" alt="Audience">
+            </div>
+            <div class="hud-box">
+                <div class="hud-data">OPTIC_LINK: <span class="text-accent">STABLE</span></div>
             </div>
         </div>
     </section>
 
-    <section class="animated-section" id="showing-previews" style="animation-delay: 0.5s;">
-        <div class="section-header">
-            <span class="section-label">Current Program</span>
-            <h2 class="section-title">Now Showing Previews</h2>
+    <section class="scroll-reveal" id="showing-previews">
+        <div class="section-header-industrial">
+            <div class="header-line"></div>
+            <div class="header-content">
+                <span class="label">LIVE_PROGRAM</span>
+                <h2 class="title">NOW SHOWING PREVIEWS</h2>
+            </div>
         </div>
 
-        <div th:if="${not #lists.isEmpty(featuredMovies)}" class="showing-grid">
-            <a th:each="movie : ${featuredMovies}" th:href="@{/MoviePage/{id}(id=${movie.id})}" class="preview-card">
-                <span class="card-genre" th:text="${movie.genre}">Genre</span>
-                <h3 class="card-title" th:text="${movie.title}">Movie Title</h3>
-
-                <div class="card-meta">
-                    <span th:text="${movie.releaseYear.year}">2026</span>
-                    <span style="color: var(--primary-red);">•</span>
-                    <span th:text="${movie.runtime_hour} + 'h ' + ${movie.runtime_minute} + 'm'">2h 15m</span>
-                </div>
-
-                <div class="card-footer" th:if="${not #lists.isEmpty(movie.rooms)}">
-                    <div class="meta-group">
-                        <span>🕒</span>
-                        <th:block th:text="${movie.show_time_hour + ':' + (movie.show_time_minute < 10 ? '0' + movie.show_time_minute : movie.show_time_minute)}">18:00</th:block>
-                    </div>
-                    <div class="meta-group">
-                        <span>🎬</span>
-                        <th:block th:text="${movie.rooms[0].name}">Theater 1</th:block>
+        <div th:if="${not #lists.isEmpty(Movielist)}" class="dossier-grid">
+            <a th:each="movie : ${Movielist}" th:href="@{/MoviePage/{id}(id=${movie.id})}" class="dossier-card">
+                <div class="card-body">
+                    <span class="card-genre" th:text="${movie.genre}">GENRE</span>
+                    <h3 class="card-title" th:text="${movie.title}">MOVIE_TITLE</h3>
+                    <div class="card-meta-data">
+                        <div class="data-row"><span class="label">REL_YEAR:</span><span class="value" th:text="${movie.releaseYear.year}">2026</span></div>
+                        <div class="data-row"><span class="label">DURATION:</span><span class="value" th:text="${movie.runtime_hour} + 'H ' + ${movie.runtime_minute} + 'M'">2H 15M</span></div>
                     </div>
                 </div>
-                <div class="card-footer" th:unless="${not #lists.isEmpty(movie.rooms)}">
-                    Time TBD
-                </div>
+                <div class="corner-tl"></div>
+                <div class="corner-br"></div>
             </a>
-        </div>
-
-        <div th:if="${#lists.isEmpty(featuredMovies)}" class="empty-state">
-            <p>[ System Idle: No projections active in featured roster ]</p>
-            <a href="/AllMovies" style="color: var(--primary-red); text-decoration: none; font-weight: bold;">View Full Catalog</a>
         </div>
     </section>
 
-    <section class="animated-section info-section" style="animation-delay: 0.8s;">
-        <div class="glass-card">
-            <h2 class="section-title">A New Era of <span class="text-red">Cinema</span></h2>
-            <p class="section-text">
-                Red Ticket Cinema redefines your night out. From immersive 4K projection to our ultra-premium reclining seats, we provide an unforgettable experience designed around you.
+    <section class="scroll-reveal glass-section">
+        <div class="industrial-glass-card">
+            <h2 class="glass-title">A NEW ERA OF <span class="text-accent">CINEMA</span></h2>
+            <p class="glass-text">
+                Red Ticket redefines the projection experience. From immersive 4K laser arrays
+                to kinetic reclining seating, we provide a secure, ultra-premium environment.
             </p>
-            <a href="/Rooms" class="btn-secondary" style="margin-top: 30px; display: inline-block;">Learn About Our Theaters</a>
+            <div class="footer-status">SYSTEM_STATUS: <span class="blink">OPTIMAL</span></div>
         </div>
     </section>
 </main>
 
-<footer class="main-footer">
-    Red Ticket Cinema &copy; 2026 • Secure System Administration Terminal
+<footer class="terminal-footer">
+    RED TICKET CINEMA &copy; 2026 // SECURE ACCESS TERMINAL
 </footer>
+
+<style>
+    :root {
+        --primary-red: #e61a1a;
+        --bg-black: #0a0a0b;
+        --card-dark: #121214;
+        --border-gray: #252527;
+        --text-dim: #888;
+        --font-mono: 'Roboto Mono', monospace;
+    }
+
+    /* Global Fade-In */
+    .site-entry {
+        animation: sitePowerOn 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        background-color: var(--bg-black);
+        color: white;
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+    }
+
+    @keyframes sitePowerOn {
+        0% { opacity: 0; filter: brightness(0.5) blur(10px); }
+        100% { opacity: 1; filter: brightness(1) blur(0); }
+    }
+
+    .tech-grid-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+        background-size: 60px 60px; pointer-events: none; z-index: 999;
+    }
+
+    .main-container { max-width: 1300px; margin: 0 auto; padding: 80px 40px; }
+
+    /* --- HERO --- */
+    .hero-container { display: flex; align-items: center; gap: 60px; min-height: 65vh; }
+    .hero-title { font-size: 4rem; font-weight: 800; line-height: 1.1; text-transform: uppercase; letter-spacing: -2px; }
+    .text-accent { color: var(--primary-red); }
+    .status-tag { font-family: var(--font-mono); color: var(--text-dim); font-size: 0.75rem; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .status-dot { width: 6px; height: 6px; background: var(--primary-red); border-radius: 50%; box-shadow: 0 0 8px var(--primary-red); }
+
+    /* --- FLOATING & PARALLAX VISUALS --- */
+    .hero-visual-stack { flex: 0 1 450px; position: relative; height: 350px; perspective: 1200px; margin-left: auto; }
+
+    .layer { position: absolute; width: 100%; transition: transform 0.1s ease-out; }
+    .layer img { width: 100%; border: 1px solid var(--border-gray); border-radius: 2px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+
+    .layer-1 { width: 75%; z-index: 1; top: 15%; left: -15%; filter: brightness(0.4) grayscale(0.6); }
+    .layer-2 { width: 90%; z-index: 2; top: 0; right: 0; border-color: rgba(230, 26, 26, 0.4); }
+
+    /* Bobbing Animations */
+    .floating-slow { animation: float 6s ease-in-out infinite; }
+    .floating-fast { animation: float 5s ease-in-out infinite; animation-delay: 1s; }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-15px) rotate(0.5deg); }
+    }
+
+    .hud-box {
+        position: absolute; bottom: 10%; left: -20%; z-index: 3;
+        background: rgba(10, 10, 12, 0.8); border: 1px solid var(--border-gray);
+        border-left: 3px solid var(--primary-red); padding: 8px 15px;
+        font-family: var(--font-mono); color: var(--primary-red); font-size: 0.65rem;
+    }
+
+    /* --- BUTTONS & CARDS --- */
+    .btn-tech { padding: 14px 30px; font-family: var(--font-mono); text-decoration: none; border: 1px solid var(--primary-red); display: inline-block; margin-right: 15px; transition: 0.3s; }
+    .btn-filled { background: var(--primary-red); color: white; }
+    .btn-outline { color: var(--primary-red); }
+    .btn-tech:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(230,26,26,0.3); }
+
+    .dossier-card { background: var(--card-dark); border: 1px solid var(--border-gray); padding: 25px; text-decoration: none; color: white; display: block; transition: 0.3s; }
+    .dossier-card:hover { border-color: var(--primary-red); transform: translateY(-5px); }
+    .card-genre { font-family: var(--font-mono); color: var(--primary-red); font-size: 0.7rem; }
+
+    .scroll-reveal { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
+    .scroll-reveal.active { opacity: 1; transform: translateY(0); }
+
+    .terminal-footer { padding: 50px; text-align: center; font-family: var(--font-mono); font-size: 0.7rem; color: #444; border-top: 1px solid var(--border-gray); }
+</style>
+
+<script>
+    // 1. Interactive Parallax (Subtle)
+    document.addEventListener('mousemove', (e) => {
+        const scene = document.getElementById('parallax-scene');
+        if (!scene) return;
+        const xAxis = (window.innerWidth / 2 - e.pageX) / 80;
+        const yAxis = (window.innerHeight / 2 - e.pageY) / 80;
+
+        // We apply the movement to the images inside the floating layers
+        const img1 = document.querySelector('.layer-1 img');
+        const img2 = document.querySelector('.layer-2 img');
+
+        img1.style.transform = `translate(${xAxis}px, ${yAxis}px)`;
+        img2.style.transform = `translate(${-xAxis}px, ${-yAxis}px)`;
+    });
+
+    // 2. Scroll Reveal
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('active');
+        });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+</script>
 
 </body>
 </html>

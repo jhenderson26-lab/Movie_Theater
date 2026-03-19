@@ -1,322 +1,405 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head th:fragment="common-head">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      background-color: #050505; /* Pure black base */
-      margin: 0;
-      padding: 0;
-      /* This creates a subtle 40px grid pattern */
-      background-image:
-              linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-              radial-gradient(circle at 50% 0%, rgba(229, 9, 20, 0.08) 0%, transparent 60%);
-      background-size: 40px 40px, 40px 40px, 100% 100%;
-      background-attachment: fixed; /* Keeps the pattern still while you scroll */
+    :root {
+      --primary-red: #ff0000;
+      --bg-black: #050505;
+      --grid-color: rgba(255, 255, 255, 0.03);
     }
 
-    /* Adds a subtle "vignette" to the corners of the screen */
-    body::after {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.4) 100%);
-      pointer-events: none; /* Allows you to click things underneath */
-      z-index: -1;
+    body {
+      font-family: 'Roboto', sans-serif !important;
+      background-color: var(--bg-black) !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      color: #ffffff !important;
+      min-height: 100vh;
+      background-image:
+              linear-gradient(var(--grid-color) 1px, transparent 1px),
+              linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
+              radial-gradient(circle at 50% 0%, rgba(255, 0, 0, 0.1) 0%, transparent 75%) !important;
+      background-size: 40px 40px, 40px 40px, 100% 100% !important;
+      background-attachment: fixed !important;
     }
   </style>
-  <title></title>
 </head>
-<header th:fragment="navbar" class="red-ticket-nav">
+
+<body>
+
+<div th:fragment="navbar" id="rt-terminal-nav">
   <style>
-    /* REDTICKET SYSTEM NAV - V3.1 (CSS Ticket Integrated) */
-    :root {
-      --nav-height: 85px;
-      --nav-bg: #0a0a0a;
-      --nav-border: #222;
-      --accent-red: #e50914;
-      --text-dim: #888;
-      --text-bright: #ffffff;
-      --transition-main: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* --- KEYFRAMES --- */
+
+    /* Subtlest flicker for the logo */
+    @keyframes rt-flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.95; }
+      52% { opacity: 1; }
     }
 
-    /* Navbar entry slide-down animation */
-    @keyframes navSlideDown {
-      from { transform: translateY(-100%); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+    /* Pulse for the ID status */
+    @keyframes rt-status-pulse {
+      0%, 100% { text-shadow: 0 0 5px rgba(255, 0, 0, 0.2); opacity: 0.7; }
+      50% { text-shadow: 0 0 12px rgba(255, 0, 0, 0.6); opacity: 1; }
     }
 
-    /* CRITICAL: Pushes page content down so it's not covered by fixed navbar */
-    body {
-      padding-top: var(--nav-height) !important;
-      margin: 0;
+    /* Chromatic Aberration / Glitch Effect (Center Links Only) */
+    /*
+    @keyframes rt-glitch-anim {
+      0% { clip-path: inset(40% 0 61% 0); transform: translate(-2px, 2px); }
+      20% { clip-path: inset(92% 0 1% 0); transform: translate(1px, -1px); }
+      40% { clip-path: inset(43% 0 1% 0); transform: translate(-1px, 2px); }
+      60% { clip-path: inset(25% 0 58% 0); transform: translate(2px, 1px); }
+      80% { clip-path: inset(54% 0 7% 0); transform: translate(-2px, -2px); }
+      100% { clip-path: inset(58% 0 43% 0); transform: translate(1px, 1px); }
+    }
+    */
+
+    /* Shimmer effect for Sign In */
+    @keyframes rt-shimmer {
+      0% { left: -150%; }
+      30% { left: 150%; }
+      100% { left: 150%; }
     }
 
-    .red-ticket-nav {
-      background: var(--nav-bg);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 60px;
-      height: var(--nav-height);
-      border-bottom: 2px solid var(--accent-red);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 10000;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+    /* --- NAVBAR CORE --- */
 
-      /* The animation on load */
-      animation: navSlideDown 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    #rt-terminal-nav .rt-web-navbar {
+      display: flex !important;
+      align-items: stretch !important;
+      justify-content: space-between !important;
+      height: 80px !important;
+      background-color: #000 !important;
+      border-bottom: 2px solid #1a1a1a !important; /* Clean, static border */
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      z-index: 99999 !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
     }
 
-    /* --- NEW INTELLIGIBLE CSS TICKET LOGO --- */
-    .rt-logo-container {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      text-decoration: none;
-      transition: transform 0.3s ease;
+    /* scanline-move animation removed */
+
+    #rt-terminal-nav .rt-nav-spacer { height: 80px !important; }
+
+    /* --- LOGO: PORTRAIT TICKET stub --- */
+
+    #rt-terminal-nav .rt-nav-left {
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 30px !important;
+      text-decoration: none !important;
+      background: #080808 !important;
+      border-right: 1px solid #111 !important;
+      animation: rt-flicker 5s infinite !important;
+      transition: background 0.3s ease !important;
+      gap: 15px !important;
     }
 
-    .rt-logo-container:hover {
-      transform: scale(1.05);
-    }
+    #rt-terminal-nav .rt-nav-left:hover { background: #0c0c0c !important; }
 
-    /* Pure CSS portrait ticket */
     .ticket-icon {
-      width: 38px;
-      height: 55px;
-      background-color: var(--accent-red);
-      border-radius: 3px;
-      position: relative;
-      overflow: hidden; /* Crucial for clean punch-outs */
-      filter: drop-shadow(0 0 5px rgba(229, 9, 20, 0.3));
-      transition: filter 0.3s ease;
+      width: 35px !important;
+      height: 50px !important;
+      background-color: var(--primary-red) !important;
+      border-radius: 3px !important;
+      position: relative !important;
+      overflow: hidden !important;
+      transition: transform 0.3s ease !important;
     }
 
-    .rt-logo-container:hover .ticket-icon {
-      filter: drop-shadow(0 0 12px rgba(229, 9, 20, 0.6));
+    #rt-terminal-nav .rt-nav-left:hover .ticket-icon {
+      transform: scale(1.05) rotate(-2deg) !important;
     }
 
-    /* Punches on the left edge - using pseudo elements overlaying nav-bg */
+    /* Punch-out effect for the ticket edge */
     .ticket-icon::before,
     .ticket-icon::after {
-      content: '';
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      background-color: var(--nav-bg); /* Use nav bg to 'cut' the red */
-      border-radius: 50%;
-      left: -7px; /* Position half off the edge */
-      transition: background 0.4s ease; /* Match nav fade if used */
+      content: '' !important;
+      position: absolute !important;
+      width: 12px !important;
+      height: 12px !important;
+      background-color: #080808 !important; /* Matches nav-left bg */
+      border-radius: 50% !important;
+      left: -6px !important;
     }
 
-    .ticket-icon::before { top: 12px; } /* Top punch */
-    .ticket-icon::after { bottom: 12px; } /* Bottom punch */
+    .ticket-icon::before { top: 10px !important; }
+    .ticket-icon::after { bottom: 10px !important; }
 
-    /* Small internal detail for realism (dashed perforation line) */
     .perforation-line {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 14px;
-      border-right: 1px dashed rgba(0,0,0,0.5); /* dashed line on ticket itself */
+      position: absolute !important;
+      top: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      width: 12px !important;
+      border-right: 1px dashed rgba(0,0,0,0.4) !important;
     }
 
-    /* Internal placeholder details */
     .ticket-detail {
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
-      font-family: monospace;
-      font-size: 8px;
-      color: rgba(0,0,0,0.6);
-      font-weight: 900;
+      position: absolute !important;
+      bottom: 4px !important;
+      right: 4px !important;
+      font-family: 'Roboto Mono', monospace !important;
+      font-size: 8px !important;
+      color: rgba(0,0,0,0.6) !important;
+      font-weight: 900 !important;
     }
 
-    /* --- Technical Text Treatment --- */
     .rt-logo-text {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.1;
+      display: flex !important;
+      flex-direction: column !important;
+      line-height: 1.1 !important;
     }
 
     .rt-logo-text-red {
-      color: var(--text-bright);
-      font-weight: 900;
-      font-size: 1.6rem;
-      letter-spacing: -1.5px;
-      text-transform: uppercase;
+      color: #ffffff !important;
+      font-weight: 900 !important;
+      font-size: 1.6rem !important;
+      letter-spacing: -1.5px !important;
+      text-transform: uppercase !important;
     }
 
     .rt-logo-text-ticket {
-      color: var(--accent-red);
-      font-weight: 700;
-      font-size: 1.1rem;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
+      color: var(--primary-red) !important;
+      font-weight: 700 !important;
+      font-size: 1.1rem !important;
+      letter-spacing: 0.5px !important;
+      text-transform: uppercase !important;
     }
 
-    /* --- Primary Navigation (unchanged) --- */
-    .nav-list {
-      display: flex;
-      align-items: center;
-      gap: 40px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
+    /* --- CENTER NAVIGATION & GLITCH HOVER --- */
+
+    #rt-terminal-nav .rt-nav-center {
+      display: flex !important;
+      flex: 1 !important;
+      justify-content: center !important;
     }
 
-    .nav-link {
-      color: var(--text-dim);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      padding: 10px 0;
-      position: relative;
-      transition: var(--transition-main);
-      background: none;
-      border: none;
-      cursor: pointer;
+    #rt-terminal-nav .rt-nav-link {
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 25px !important;
+      color: #777 !important;
+      text-decoration: none !important;
+      font-weight: 900 !important;
+      font-size: 0.75rem !important;
+      text-transform: uppercase !important;
+      letter-spacing: 2px !important;
+      border-right: 1px solid #111 !important;
+      position: relative !important;
+      transition: color 0.3s ease !important;
     }
 
-    .nav-link:hover { color: var(--text-bright); }
+    #rt-terminal-nav .rt-nav-link:first-child { border-left: 1px solid #111 !important; }
 
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--accent-red);
-      transition: var(--transition-main);
+    #rt-terminal-nav .rt-nav-link:hover { color: #fff !important; }
+
+    /* The Red Bottom Bar that appears on hover */
+    #rt-terminal-nav .rt-nav-link::after {
+      content: "" !important;
+      position: absolute !important;
+      bottom: 0 !important;
+      left: 50% !important;
+      width: 0% !important;
+      height: 3px !important;
+      background: var(--primary-red) !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      transform: translateX(-50%) !important;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.5) !important;
     }
 
-    .nav-link:hover::after { width: 100%; }
+    #rt-terminal-nav .rt-nav-link:hover::after { width: 100% !important; }
 
-    /* --- Admin Dropdown (unchanged) --- */
-    .dropdown-container { position: relative; }
-
-    .manage-trigger {
-      background: #1a1a1a;
-      color: var(--accent-red);
-      border: 1px solid #333;
-      padding: 8px 18px;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: var(--transition-main);
+    /* Glitch overlay appearing on hover */
+    #rt-terminal-nav .rt-nav-link:hover::before {
+      content: attr(data-text) !important;
+      position: absolute !important;
+      left: 25px !important;
+      text-shadow: 2px 0 var(--primary-red), -2px 0 cyan !important;
+      animation: rt-glitch-anim 0.4s infinite linear alternate-reverse !important;
+      opacity: 0.4 !important;
+      pointer-events: none !important;
     }
 
-    .manage-trigger:hover {
-      background: var(--accent-red);
-      color: white;
-      border-color: var(--accent-red);
-      box-shadow: 0 0 15px rgba(229, 9, 20, 0.3);
+    /* --- ADMIN MODULE --- */
+
+    #rt-terminal-nav .rt-admin-module {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      padding: 0 20px !important;
+      border-left: 1px solid #111 !important;
     }
 
-    .dropdown-panel {
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(20px);
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 15px;
-      background: #141414;
-      min-width: 240px;
-      border: 1px solid #2a2a2a;
-      border-radius: 4px;
-      padding: 12px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.9);
-      transition: var(--transition-main);
+    #rt-terminal-nav .rt-admin-btn {
+      color: var(--primary-red) !important;
+      text-decoration: none !important;
+      font-family: 'Roboto Mono', monospace !important;
+      font-size: 0.65rem !important;
+      font-weight: 900 !important;
+      border: 1px solid var(--primary-red) !important;
+      padding: 5px 12px !important;
+      transition: all 0.2s ease !important;
     }
 
-    .dropdown-container:hover .dropdown-panel {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
+    #rt-terminal-nav .rt-admin-btn:hover {
+      background: var(--primary-red) !important;
+      color: #000 !important;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.4) !important;
     }
 
-    .dropdown-panel a {
-      display: block;
-      padding: 12px 15px;
-      color: #999;
-      text-decoration: none;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      border-radius: 2px;
-      transition: all 0.2s;
-      border-left: 3px solid transparent;
+    /* --- ID MODULE (RIGHT) --- */
+
+    #rt-terminal-nav .rt-nav-right {
+      display: flex !important;
+      align-items: stretch !important;
     }
 
-    .dropdown-panel a:hover {
-      background: #1a1a1a;
-      color: var(--accent-red);
-      border-left-color: var(--accent-red);
-      padding-left: 20px;
+    #rt-terminal-nav .rt-id-module {
+      background: #080808 !important;
+      border-left: 1px solid #111 !important;
+      padding: 0 25px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      min-width: 180px !important;
+      font-family: 'Roboto Mono', monospace !important;
+      text-align: right !important;
     }
 
-    .btn-sign-out { color: var(--accent-red) !important; font-family: monospace; }
+    #rt-terminal-nav .rt-id-user {
+      font-size: 0.85rem !important;
+      font-weight: 900 !important;
+      color: var(--primary-red) !important;
+      text-transform: uppercase !important;
+      animation: rt-status-pulse 3s infinite ease-in-out !important;
+    }
+
+    #rt-terminal-nav .rt-id-header, #rt-terminal-nav .rt-id-footer {
+      font-size: 0.5rem !important;
+      color: #444 !important;
+      letter-spacing: 1px !important;
+    }
+
+    #rt-terminal-nav .rt-sign-out-cell {
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 20px !important;
+      border-left: 1px solid #111 !important;
+    }
+
+    #rt-terminal-nav .rt-sign-out-btn {
+      background: none !important;
+      border: 1px solid #222 !important;
+      color: #555 !important;
+      padding: 8px 15px !important;
+      font-size: 0.7rem !important;
+      font-weight: 900 !important;
+      cursor: pointer !important;
+      text-transform: uppercase !important;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      letter-spacing: 0px !important;
+    }
+
+    #rt-terminal-nav .rt-sign-out-btn:hover {
+      border-color: var(--primary-red) !important;
+      color: #fff !important;
+      background: rgba(255, 0, 0, 0.1) !important;
+      letter-spacing: 3px !important; /* Stretches text on hover */
+      padding-left: 20px !important;
+      padding-right: 20px !important;
+    }
+
+    /* --- SIGN IN BUTTON & SHIMMER --- */
+
+    #rt-terminal-nav .rt-sign-in-link {
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 40px !important;
+      background: var(--primary-red) !important;
+      color: #000 !important;
+      font-weight: 900 !important;
+      text-decoration: none !important;
+      font-size: 0.85rem !important;
+      letter-spacing: 1px !important;
+      position: relative !important;
+      overflow: hidden !important;
+      transition: all 0.3s ease !important;
+    }
+
+    /* Moving light beam on Sign In button */
+    #rt-terminal-nav .rt-sign-in-link::before {
+      content: "" !important;
+      position: absolute !important;
+      top: 0 !important;
+      width: 50% !important;
+      height: 100% !important;
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent) !important;
+      animation: rt-shimmer 3s infinite !important;
+    }
+
+    #rt-terminal-nav .rt-sign-in-link:hover {
+      filter: brightness(1.2) !important;
+      transform: scale(1.02) !important;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.4) !important;
+    }
   </style>
 
-  <a th:href="@{/}" class="rt-logo-container">
-    <div class="ticket-icon">
-      <div class="perforation-line"></div>
-      <div class="ticket-detail">RT</div>
+  <nav class="rt-web-navbar">
+    <a href="/" class="rt-nav-left">
+      <div class="ticket-icon">
+        <div class="perforation-line"></div>
+        <div class="ticket-detail">RT</div>
+      </div>
+
+      <div class="rt-logo-text">
+        <span class="rt-logo-text-red">RED</span>
+        <span class="rt-logo-text-ticket">TICKET</span>
+      </div>
+    </a>
+
+    <div class="rt-nav-center">
+      <a th:href="@{/AllMovies}" class="rt-nav-link" data-text="SHOWINGS">Showings</a>
+      <a th:href="@{/Rooms}" class="rt-nav-link" data-text="THEATERS">Theaters</a>
+      <a th:href="@{/History}" class="rt-nav-link" data-text="TICKETS">Tickets</a>
+      <a th:href="@{/Cart}" class="rt-nav-link" data-text="CART">Cart</a>
+
+      <div class="rt-admin-module" sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/AddingMoviePage}" class="rt-admin-btn">+ ADD_MOVIE</a>
+        <a th:href="@{/AddingRoomPage}" class="rt-admin-btn">+ ADD_ROOM</a>
+      </div>
     </div>
 
-    <div class="rt-logo-text">
-      <span class="rt-logo-text-red">RED</span>
-      <span class="rt-logo-text-ticket">TICKET</span>
-    </div>
-  </a>
-
-  <nav>
-    <ul class="nav-list">
-      <li class="dropdown-container" sec:authorize="hasRole('ADMIN')">
-        <button class="manage-trigger">ADMIN CONTROLS ▾</button>
-        <div class="dropdown-panel">
-          <a th:href="@{/AddingMoviePage}">+ Create_New_Movie</a>
-          <a th:href="@{/AddingRoomPage}">+ Create_New_Room</a>
+    <div class="rt-nav-right">
+      <div th:if="${username != null}" style="display:flex;">
+        <div class="rt-id-module">
+          <div class="rt-id-header">SEC_IDENT // SESSION_XJ9</div>
+          <div class="rt-id-user" th:text="${username}">ADMIN</div>
+          <div class="rt-id-footer">STATUS: VALIDATED_SYSTEM_LINK</div>
         </div>
-      </li>
+        <div class="rt-sign-out-cell">
+          <form th:action="@{/logout}" method="post" style="margin:0;">
+            <button type="submit" class="rt-sign-out-btn">SIGN_OUT</button>
+          </form>
+        </div>
+      </div>
 
-      <li><a th:href="@{/AllMovies}" class="nav-link">Showings</a></li>
-      <li><a th:href="@{/Rooms}" class="nav-link">Theaters</a></li>
-
-      <li sec:authorize="isAuthenticated()">
-        <a th:href="@{/History}" class="nav-link">Tickets</a>
-      </li>
-
-      <li sec:authorize="isAuthenticated()">
-        <a th:href="@{/Cart}" class="nav-link">Cart</a>
-      </li>
-
-      <li sec:authorize="isAnonymous()">
-        <a th:href="@{/login}" class="nav-link">Sign_In</a>
-      </li>
-
-      <li sec:authorize="isAuthenticated()">
-        <form th:action="@{/logout}" method="post" style="display: inline;">
-          <button type="submit" class="nav-link btn-sign-out">Sign_Out</button>
-        </form>
-      </li>
-    </ul>
+      <div th:unless="${username != null}" style="display:flex;">
+        <a th:href="@{/login}" class="rt-sign-in-link">SIGN_IN</a>
+      </div>
+    </div>
   </nav>
-</header>
+  <div class="rt-nav-spacer"></div>
+</div>
+
+</body>
 </html>

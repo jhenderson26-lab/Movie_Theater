@@ -236,11 +236,9 @@
 
                 <div class="showtime-info">
                     <div class="info-tag">
-                        <!--<span>🕒</span>-->
                         <th:block th:text="${movie.show_time_hour + ':' + (movie.show_time_minute < 10 ? '0' + movie.show_time_minute : movie.show_time_minute)}"></th:block>
                     </div>
                     <div class="info-tag" th:if="${not #lists.isEmpty(movie.rooms)}">
-                        <!--<span>🎬</span>-->
                         <th:block th:text="${movie.rooms[0].name}"></th:block>
                     </div>
                 </div>
@@ -255,7 +253,7 @@
                     <span class="price-label">Ticket Rate</span>
                     <span class="price-tag" th:text="'$' + ${#numbers.formatDecimal(movie.cost, 1, 2)}">$0.00</span>
                 </div>
-                <a th:href="@{/MoviePage/{id}(id=${movie.id})}" class="view-btn">Inspect &raquo;</a>
+                <a th:href="@{/MoviePage/{id}(id=${movie.id})}" class="view-btn">See More &raquo;</a>
             </div>
         </div>
     </div>

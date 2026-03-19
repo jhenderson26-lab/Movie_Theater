@@ -46,7 +46,7 @@ public class TheaterConfig {
             roomRepo.saveAll(List.of(t1, t2, t3, t4, t5, t6));
 
             List.of(t1, t2, t3, t4, t5, t6).forEach(room -> {
-                int rows = 5;
+                int rows = 8;
                 int seatsPerRow = room.getCapacity() / rows;
                 for (int i = 0; i < rows; i++) {
                     char rowChar = (char) ('A' + i);
