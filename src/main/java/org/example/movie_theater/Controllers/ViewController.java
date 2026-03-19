@@ -348,6 +348,14 @@ public class ViewController {
         return "Room";
     }
 
+    @DeleteMapping("/DeleteMovie")
+    public String deletingMovie(@RequestParam("id") Long id){
+        Movie movie = movieService.findMovieById(id);
+        movie.getTickets().forEach(ticket -> ticket.setMovie(null));
+        movie.getTickets().clear();
+        movieService.deleteMovie(id);
+        return "redirect:/AllMovies";
+    }
 
 
 }

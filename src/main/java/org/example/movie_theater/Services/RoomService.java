@@ -54,4 +54,5 @@ public class RoomService {
         roomRepository.deleteBySeatIdAndRoomId(seatId, roomId);
     }
 
+
 }

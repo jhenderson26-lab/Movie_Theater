@@ -23,6 +23,7 @@ public class Room {
     private Integer capacity;
 
     @ManyToMany(mappedBy = "rooms")
+    @OrderBy("id ASC")
     private List<Movie> movies = new ArrayList<>();
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
