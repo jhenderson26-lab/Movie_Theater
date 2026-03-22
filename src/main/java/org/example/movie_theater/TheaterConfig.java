@@ -37,22 +37,26 @@ public class TheaterConfig {
     CommandLineRunner commandLineRunner(MovieRepository movieRepo, RoomRepository roomRepo, SeatRepository seatRepo) {
         return args -> {
             Room t1 = new Room("Theater 1", 40);
-            Room t2 = new Room("Theater 2", 30);
-            Room t3 = new Room("Theater 3", 50);
-            Room t4 = new Room("Theater 4", 20);
-            Room t5 = new Room("Theater 5", 25);
-            Room t6 = new Room("Theater 6", 15);
+            Room t2 = new Room("Theater 2", 40);
+            Room t3 = new Room("Theater 3", 40);
+            Room t4 = new Room("Theater 4", 40);
+            Room t5 = new Room("Theater 5", 40);
+            Room t6 = new Room("Theater 6", 40);
 
             roomRepo.saveAll(List.of(t1, t2, t3, t4, t5, t6));
 
             List.of(t1, t2, t3, t4, t5, t6).forEach(room -> {
-                int rows = 8;
-                int seatsPerRow = room.getCapacity() / rows;
-                for (int i = 0; i < rows; i++) {
-                    char rowChar = (char) ('A' + i);
-                    for (int j = 1; j <= seatsPerRow; j++) {
-                        seatRepo.save(new Seat(rowChar + String.valueOf(j), room));
-                    }
+                int totalSeats = room.getCapacity();
+                int seatsPerRow = 8;
+
+                for (int i = 0; i < totalSeats; i++) {
+                    int rowIndex = i / seatsPerRow;
+                    int colIndex = (i % seatsPerRow) + 1;
+
+                    char rowChar = (char) ('A' + rowIndex);
+                    String seatName = rowChar + String.valueOf(colIndex);
+
+                    seatRepo.save(new Seat(seatName, room));
                 }
             });
 

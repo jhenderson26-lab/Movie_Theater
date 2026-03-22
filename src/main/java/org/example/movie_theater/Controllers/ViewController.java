@@ -1,8 +1,6 @@
-//test commit
 package org.example.movie_theater.Controllers;
 
 import org.example.movie_theater.Entities.*;
-import org.example.movie_theater.Repos.MovieRepository;
 import org.example.movie_theater.Services.*;
 import org.example.movie_theater.User.User;
 import org.example.movie_theater.User.UserService;
@@ -32,8 +30,6 @@ public class ViewController {
         this.userService = userService;
     }
 
-    // basic navigation endpoints
-
     @GetMapping("/")
     public String Homepage(Model model, Principal principal) {
         model.addAttribute("Movielist", movieService.getAllMovies());
@@ -62,43 +58,10 @@ public class ViewController {
         return "Room";
     }
 
-
-    // ticket related endpoints
-
-    /*
-    @GetMapping("/TicketBooking/{movieId}")
-    public String showSeatSelection(@PathVariable Long movieId, Model model) {
-        Movie movie = movieService.findMovieById(movieId);
-        // debug
-        System.out.println(movie.getTitle());
-        System.out.println(movie.getRooms().size());
-
-        if (movie.getRooms() == null || movie.getRooms().isEmpty()) {
-            System.out.println("REDIRECTING: No rooms found for this movie.");
-            return "redirect:/AllMovies";
-        }
-
-        List<Seat> seats = movie.getRooms().getFirst().getSeats();
-        // debug
-        System.out.println((seats != null ? seats.size() : 0));
-
-        if (seats == null || seats.isEmpty()) {
-            System.out.println("REDIRECTING: Room has no seats initialized.");
-            return "redirect:/AllMovies";
-        }
-
-        model.addAttribute("movie", movie);
-        model.addAttribute("seats", seats);
-        model.addAttribute("isEditing", false);
-        return "Movie/SeatSelection";
-    }
-    */
-
     @GetMapping("/TicketBooking/{movieId}")
     public String showSeatSelection(@PathVariable Long movieId, Model model) {
         Movie movie = movieService.findMovieById(movieId);
         List<Seat> allSeats = movie.getRooms().getFirst().getSeats();
-
         List<Long> occupiedSeatIds = ticketService.getOccupiedSeatIdsForMovie(movieId);
 
         model.addAttribute("movie", movie);
@@ -110,24 +73,26 @@ public class ViewController {
 
     @PostMapping("/AddToCart")
     public String addToCart(@RequestParam(required = false) Long movieId,
-                            @RequestParam(required = false) Long seatId,
+                            @RequestParam(required = false) List<Long> seatIds,
                             Principal principal) {
-        User user = userService.findByUsername(principal.getName());
-
-        if (movieId == null || seatId == null || principal == null){
-            return "redirect:/Cart";
+        if (principal == null || movieId == null || seatIds == null || seatIds.isEmpty()) {
+            return "redirect:/AllMovies";
         }
+
+        User user = userService.findByUsername(principal.getName());
         Movie movie = movieService.findMovieById(movieId);
-        ticketService.createTicketForSeat(seatId, user, movie);
+
+        for (Long seatId : seatIds) {
+            ticketService.createTicketForSeat(seatId, user, movie);
+        }
+
         return "redirect:/Cart";
     }
-
 
     @GetMapping("/Cart")
     public String viewCart(Model model, Principal principal) {
         User user = userService.findByUsername(principal.getName());
         List<Ticket> cartItems = ticketService.getCartByUser(user);
-
         model.addAttribute("cartItems", cartItems);
         return "Cart";
     }
@@ -135,7 +100,6 @@ public class ViewController {
     @GetMapping("/EditTicket/{ticketId}")
     public String editTicket(@PathVariable Long ticketId, Model model) {
         Ticket ticket = ticketService.findTicketById(ticketId);
-
         model.addAttribute("movie", ticket.getMovie());
         model.addAttribute("seats", ticket.getMovie().getRooms().getFirst().getSeats());
         model.addAttribute("existingTicketId", ticketId);
@@ -145,30 +109,20 @@ public class ViewController {
 
     @PostMapping("/UpdateTicket")
     public String updateTicket(@RequestParam Long ticketId,
-                               @RequestParam Long newSeatId) {
-        ticketService.updateTicketSeat(ticketId, newSeatId);
+                               @RequestParam(name = "seatIds") List<Long> seatIds) {
+        // When editing a specific ticket, we just take the first seat selected
+        if (!seatIds.isEmpty()) {
+            ticketService.updateTicketSeat(ticketId, seatIds.getFirst());
+        }
         return "redirect:/Cart";
     }
 
     @PostMapping("/checkout")
     public String processCheckout(@RequestParam("cartItemIds") List<Long> cartItemIds, Principal principal) {
-
-        User user = userService.findByUsername(principal.getName());
         for (Long ticketId : cartItemIds) {
             ticketService.purchaseTicket(ticketId);
         }
         return "redirect:/MyTickets";
-//        List<Ticket> cartItems = ticketService.getCartByUser(user);
-//
-//        for (Ticket item : cartItems) {
-//            System.out.println("Ticket ID: " + item.getId());
-//
-//            if (item.getSeat() != null) {
-//                System.out.println("Seat Number: " + item.getSeat().getSeatNumber());
-//            }
-//        }
-//
-//        return "redirect:/Cart";
     }
 
     @GetMapping("/MyTickets")
@@ -187,20 +141,10 @@ public class ViewController {
 
     public void addingSeat4Room(Room room){
         int capacity = room.getCapacity();
-        int seatsPerRow = 1;
-        int rows = capacity;
-
-
-        for (int i = (int) Math.sqrt(capacity); i >= 1; i--) {
-            if (capacity % i == 0) {
-                seatsPerRow = i;
-                rows = capacity / i;
-                break;
-            }
-        }
+        int seatsPerRow = 8;
+        int rows = (int) Math.ceil((double) capacity / seatsPerRow);
         roomService.initializeSeats(room.getId(), rows, seatsPerRow);
     }
-
 
     @PostMapping("/AddedNewRoom")
     public String AddedRoom(@ModelAttribute Room room, @RequestParam(value = "movieIds", required = false) List<Long> movieIds) {
@@ -208,8 +152,6 @@ public class ViewController {
             return "redirect:/AddingRoomPage";
         }
         room = roomService.addRoomR(room);
-
-
         if (movieIds != null && !movieIds.isEmpty()) {
             for (Long id : movieIds) {
                 Movie movie = movieService.findMovieById(id);
@@ -220,8 +162,6 @@ public class ViewController {
             }
         }
         addingSeat4Room(room);
-
-
         return "redirect:/Rooms";
     }
 
@@ -234,30 +174,18 @@ public class ViewController {
     @PostMapping("/AddedNewMovie")
     public String AddedMovie(@ModelAttribute("movie") Movie movie,
                              @RequestParam("room") Long roomId) {
-
         Room selectedRoom = roomService.findRoomById(roomId);
         if (selectedRoom != null) {
             movie.getRooms().add(selectedRoom);
         }
         movieService.saveMovie(movie);
-
         return "redirect:/AllMovies";
-    }
-
-
-    @PostMapping("/Checkout")
-    public String processCheckout(Principal principal) {
-        User user = userService.findByUsername(principal.getName());
-        ticketService.checkout(user);
-
-        return "redirect:/History";
     }
 
     @GetMapping("/History")
     public String showHistory(Model model, Principal principal) {
         User user = userService.findByUsername(principal.getName());
         List<Ticket> history = ticketService.getPurchaseHistory(user);
-
         model.addAttribute("history", history);
         return "/TicketHistory";
     }
@@ -276,13 +204,8 @@ public class ViewController {
     }
 
     @PostMapping("/UpdateMovie/{id}")
-    public String Updatedmovie(
-            @PathVariable Long id,
-        @ModelAttribute Movie updatedMovie
-    ) {
+    public String Updatedmovie(@PathVariable Long id, @ModelAttribute Movie updatedMovie) {
         Movie movie = movieService.findMovieById(id);
-
-
         movie.setTitle(updatedMovie.getTitle());
         movie.setReleaseYear(updatedMovie.getReleaseYear());
         movie.setGenre(updatedMovie.getGenre());
@@ -292,9 +215,7 @@ public class ViewController {
         movie.setShow_time_minute(updatedMovie.getShow_time_minute());
         movie.setRuntime_hour(updatedMovie.getRuntime_hour());
         movie.setRuntime_minute(updatedMovie.getRuntime_minute());
-
         movieService.saveMovie(movie);
-
         return "redirect:/AllMovies";
     }
 
@@ -305,57 +226,9 @@ public class ViewController {
         return "EditRoom";
     }
 
-    @PutMapping("/UpdateRoom/{id}")
-    public String EditedRoom(
-            @PathVariable Long id,
-            @ModelAttribute Room updatedRoom,
-            @RequestParam(value = "movieIds", required = false) List<Long> movieIds) {
-
-
-        Room room = roomService.findRoomById(id);
-        Integer setBack = updatedRoom.getCapacity();
-        if (room.getCapacity() > updatedRoom.getCapacity()){
-            for (long i = (updatedRoom.getCapacity() + 1); i <= room.getCapacity(); i++) {
-                System.out.println(i);
-                roomService.deletingRoomseats(i, id);
-            }
-            updatedRoom.setCapacity(updatedRoom.getCapacity());
-        } else if (room.getCapacity() < updatedRoom.getCapacity()) {
-            updatedRoom.setCapacity(updatedRoom.getCapacity() - room.getCapacity());
-            addingSeat4Room(updatedRoom);
-            updatedRoom.setCapacity(setBack);
-        }
-        room.setName(updatedRoom.getName());
-        room.setCapacity(updatedRoom.getCapacity());
-
-
-        for (Movie movie : room.getMovies()) {
-            movie.getRooms().remove(room);
-        }
-        room.getMovies().clear();
-
-
-        if (movieIds != null) {
-            List<Movie> selectedMovies = movieService.findAllById(movieIds);
-            for (Movie movie : selectedMovies) {
-                room.getMovies().add(movie);
-                movie.getRooms().add(room);
-            }
-        }
-
-
-        roomService.addRoom(room);
-        return "Room";
-    }
-
     @DeleteMapping("/DeleteMovie")
     public String deletingMovie(@RequestParam("id") Long id){
-        Movie movie = movieService.findMovieById(id);
-        movie.getTickets().forEach(ticket -> ticket.setMovie(null));
-        movie.getTickets().clear();
         movieService.deleteMovie(id);
         return "redirect:/AllMovies";
     }
-
-
 }

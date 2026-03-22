@@ -6,35 +6,31 @@
 </head>
 <div th:replace="~{fragments :: navbar}"></div>
 
-<div class="tech-grid-overlay"></div>
-
 <main class="main-container">
 
     <section class="hero-container" id="hero">
         <div class="hero-content">
             <div class="status-tag">
-                <span class="status-dot"></span> SYSTEM_READY // SESSION_2026
+                <span class="status-dot"></span> SYSTEM_READY // VERSION_2026
             </div>
             <h1 class="hero-title">Experience <span class="text-accent">Magic</span> <br>On The Big Screen</h1>
             <p class="hero-subtitle">
-                Deploying ultra-premium 4K optics and industrial-grade soundscapes.
-                The cinematic uplink is established.
+                Ultra-premium 4K optics and industrial-grade soundscapes.
             </p>
             <div class="btn-group">
-                <a href="/AllMovies" class="btn-tech btn-filled">BROWSE_SHOWINGS</a>
-                <a href="/Rooms" class="btn-tech btn-outline">VIEW_THEATERS</a>
+                <a href="/AllMovies" class="btn-tech btn-filled">BROWSE SHOWINGS</a>
+                <a href="/Rooms" class="btn-tech btn-outline">VIEW THEATERS</a>
             </div>
         </div>
 
         <div class="hero-visual-stack" id="parallax-scene">
+            <!--
             <div class="layer layer-1 floating-slow">
-                <img src="Images/Seats.png" alt="Cinema Seating">
+                <img src="Images/Audience.png" alt="Cinema Seating">
             </div>
+            -->
             <div class="layer layer-2 floating-fast">
-                <img src="Images/Audience.png" alt="Audience">
-            </div>
-            <div class="hud-box">
-                <div class="hud-data">OPTIC_LINK: <span class="text-accent">STABLE</span></div>
+                <img src="Images/movie_seats.jpg" alt="Audience">
             </div>
         </div>
     </section>
@@ -127,7 +123,7 @@
     .layer img { width: 100%; border: 1px solid var(--border-gray); border-radius: 2px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
 
     .layer-1 { width: 75%; z-index: 1; top: 15%; left: -15%; filter: brightness(0.4) grayscale(0.6); }
-    .layer-2 { width: 90%; z-index: 2; top: 0; right: 0; border-color: rgba(230, 26, 26, 0.4); }
+    .layer-2 { width: 130%; z-index: 2; top: 0; right: 0; border-color: rgba(230, 26, 26, 0.4); }
 
     /* Bobbing Animations */
     .floating-slow { animation: float 6s ease-in-out infinite; }
@@ -162,21 +158,6 @@
 </style>
 
 <script>
-    // 1. Interactive Parallax (Subtle)
-    document.addEventListener('mousemove', (e) => {
-        const scene = document.getElementById('parallax-scene');
-        if (!scene) return;
-        const xAxis = (window.innerWidth / 2 - e.pageX) / 80;
-        const yAxis = (window.innerHeight / 2 - e.pageY) / 80;
-
-        // We apply the movement to the images inside the floating layers
-        const img1 = document.querySelector('.layer-1 img');
-        const img2 = document.querySelector('.layer-2 img');
-
-        img1.style.transform = `translate(${xAxis}px, ${yAxis}px)`;
-        img2.style.transform = `translate(${-xAxis}px, ${-yAxis}px)`;
-    });
-
     // 2. Scroll Reveal
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {

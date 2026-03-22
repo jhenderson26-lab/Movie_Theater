@@ -1,303 +1,260 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments :: common-head}">
-    <title></title>
+    <title>Tactical Seat Selection | RedTicket</title>
 </head>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Your Seat | RedTicket</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-red: #ff0000;
-            --dark-red: #b20710;
-            --bg-black: #050505;
-            --panel-bg: #111111;
-            --border-gray: #2a2a2a;
-            --seat-free: #222222;
-            --seat-occ: #0a0a0a;
-            --sharp: 2px;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-black);
-            background-image: radial-gradient(circle at 50% -20%, rgba(255, 0, 0, 0.1) 0%, transparent 50%);
-            margin: 0;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-        }
-
-        .theater-container {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-gray);
-            border-radius: var(--sharp);
-            padding: 60px 40px;
-            max-width: 800px;
-            width: 100%;
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
-            text-align: center; /* Ensures global centering */
-        }
-
-        /* 1. FIXED HEADER ALIGNMENT */
-        .selection-header {
-            margin-bottom: 40px;
-            display: inline-block; /* Wraps content for the red border effect */
-            border-left: 4px solid var(--primary-red);
-            padding: 0 20px;
-            text-align: left; /* Keeps text left-aligned inside the centered box */
-        }
-
-        .selection-header h2 {
-            font-size: 2.4rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin: 0;
-            letter-spacing: -1px;
-            line-height: 1;
-        }
-
-        .movie-runtime {
-            color: var(--primary-red);
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            margin-top: 8px;
-            letter-spacing: 1px;
-        }
-
-        /* 2. CENTERED SCREEN & TEXT */
-        .screen-container {
-            perspective: 1000px;
-            margin: 20px 0 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .screen {
-            background: #ffffff;
-            height: 6px;
-            width: 80%;
-            border-radius: 10px;
-            box-shadow: 0 0 25px #fff, 0 5px 50px rgba(255, 255, 255, 0.2);
-            transform: rotateX(-30deg);
-        }
-
-        .screen-label {
-            color: #444;
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 6px;
-            margin-top: 15px;
-            font-weight: 900;
-        }
-
-        /* 3. SEAT GRID ALIGNMENT */
-        .seat-grid-wrapper {
-            perspective: 1200px;
-            margin-bottom: 40px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .seat-grid {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 12px;
-            width: 100%;
-            max-width: 672px; /* Tighter grid for better symmetry */
-            transform: rotateX(12deg);
-        }
-
-        .seat-radio { display: none; }
-
-        .seat-label {
-            width: 100%;
-            aspect-ratio: 1.1 / 1;
-            background: var(--seat-free);
-            border: 1px solid var(--border-gray);
-            border-bottom: 5px solid #000;
-            border-radius: var(--sharp);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-weight: 900;
-            font-size: 0.8rem;
-            color: #555;
-            transition: all 0.1s;
-        }
-
-        .seat-label:hover:not(.occupied) {
-            border-color: #666;
-            color: #fff;
-        }
-
-        .seat-radio:checked + .seat-label {
-            background: var(--primary-red);
-            color: white;
-            border-color: #ff4d4d;
-            border-bottom: 2px solid var(--dark-red);
-            transform: translateY(3px); /* Press down effect */
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-        }
-
-        .seat-label.occupied {
-            background: var(--seat-occ);
-            border-color: #1a1a1a;
-            color: #222;
-            cursor: not-allowed;
-            border-bottom: 2px solid #000;
-        }
-
-        /* 4. BALANCED LEGEND */
-        .legend {
-            display: inline-flex;
-            gap: 20px;
-            padding: 12px 30px;
-            background: #0a0a0a;
-            border: 1px solid var(--border-gray);
-            border-radius: var(--sharp);
-            margin-bottom: 40px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.65rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            color: #666;
-        }
-
-        .legend-box {
-            width: 12px;
-            height: 12px;
-            border-radius: 1px;
-        }
-
-        /* 5. MATCHING BUTTON HEIGHTS */
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            max-width: 600px;
-            margin: 0 auto;
-            align-items: stretch; /* Forces equal height */
-        }
-
-        .confirm-btn, .back-btn {
-            padding: 20px;
-            font-weight: 900;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            border-radius: var(--sharp);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            border: none;
-        }
-
-        .confirm-btn {
-            flex: 2;
-            background: var(--primary-red);
-            color: #000;
-            box-shadow: 0 4px 0px var(--dark-red);
-            position: relative;
-            top: -4px; /* Offsets shadow for center alignment */
-        }
-
-        .confirm-btn:hover {
-            background: #ff3333;
-            top: -5px;
-            box-shadow: 0 5px 0px var(--dark-red);
-        }
-
-        .confirm-btn:active {
-            top: 0;
-            box-shadow: 0 0px 0px var(--dark-red);
-        }
-
-        .back-btn {
-            flex: 1;
-            background: #222;
-            color: #fff;
-            text-decoration: none;
-            border: 1px solid var(--border-gray);
-        }
-
-        .back-btn:hover {
-            background: #333;
-        }
-
-    </style>
-</head>
-<body>
+<body class="site-entry">
 
 <div th:replace="~{fragments :: navbar}"></div>
 
-<div class="main-content">
-    <div class="theater-container">
+<main class="main-content">
+    <div class="terminal-module">
 
-        <div class="selection-header">
-            <h2 th:text="${isEditing} ? 'Modify Seat' : 'Seat Selection'">Seat Selection</h2>
-            <div class="movie-runtime">
-                <span th:text="${movie.title}">JOHN WICK</span> •
-                <span th:text="${movie.runtime_hour} + 'H ' + ${movie.runtime_minute} + 'M'">1H 41M</span>
+        <div class="module-header">
+            <span class="header-text">FACILITY_CONTROL_V2.0 // SECTOR_SELECTION</span>
+            <a th:href="@{/MoviePage/{id}(id=${movie.id})}" class="header-exit">X</a>
+        </div>
+
+        <div class="module-body">
+            <header class="selection-header">
+                <h2 th:text="${isEditing} ? 'Modify Deployment' : 'Seat Selection'">Seat Selection</h2>
+                <div class="movie-runtime">
+                    <span th:text="${movie.title}">MAD MAX: FURY ROAD</span> •
+                    <span th:text="${movie.runtime_hour} + 'H ' + ${movie.runtime_minute} + 'M'">2H 0M</span>
+                </div>
+            </header>
+
+            <div class="screen-container">
+                <div class="screen-housing">
+                    <div class="screen-surface"></div>
+                    <div class="screen-glow-beam"></div>
+                </div>
+                <div class="screen-label">_SCREEN_</div>
             </div>
-        </div>
 
-        <div class="screen-container">
-            <div class="screen"></div>
-            <div class="screen-label">Front of Stage</div>
-        </div>
+            <form th:action="${isEditing} ? @{/UpdateTicket} : @{/AddToCart}" method="post">
+                <input type="hidden" name="movieId" th:value="${movie.id}" th:if="${!isEditing}">
+                <input type="hidden" name="ticketId" th:value="${existingTicketId}" th:if="${isEditing}">
 
-        <form th:action="${isEditing} ? @{/UpdateTicket} : @{/AddToCart}" method="post">
-            <input type="hidden" name="movieId" th:value="${movie.id}" th:if="${!isEditing}">
-            <input type="hidden" name="ticketId" th:value="${existingTicketId}" th:if="${isEditing}">
-            <input type="hidden" name="newSeatId" th:if="${isEditing}" id="newSeatId">
+                <div class="seat-grid-wrapper">
+                    <div class="perspective-floor">
 
-            <div class="seat-grid-wrapper">
-                <div class="seat-grid">
-                    <div th:each="seat : ${seats}">
-                        <input type="radio" th:id="${'seat-' + seat.id}" name="seatId" th:value="${seat.id}" class="seat-radio"
-                               th:disabled="${#lists.contains(occupiedSeatIds, seat.id)}"
-                               th:onclick="${isEditing} ? 'document.getElementById(\'newSeatId\').value=this.value' : ''">
-                        <label th:for="${'seat-' + seat.id}" class="seat-label" th:classappend="${#lists.contains(occupiedSeatIds, seat.id)} ? 'occupied' : ''">
-                            <span th:text="${seat.seatNumber}"></span>
-                        </label>
+                        <div class="walkway-external_l left">
+                            <div class="floor-texture"></div>
+                            <div class="aisle-led"></div>
+                        </div>
+
+                        <div class="tactical-plane">
+                            <div class="corner top-left"></div>
+                            <div class="corner top-right"></div>
+                            <div class="corner bottom-left"></div>
+                            <div class="corner bottom-right"></div>
+
+                            <div class="seat-grid">
+                                <div th:each="seat : ${seats}">
+                                    <input type="checkbox"
+                                           th:id="${'seat-' + seat.id}"
+                                           name="seatIds"
+                                           th:value="${seat.id}"
+                                           class="seat-checkbox"
+                                           th:disabled="${#lists.contains(occupiedSeatIds, seat.id)}"
+                                           th:onclick="${isEditing} ? 'handleSingleSelect(this)' : ''">
+
+                                    <label th:for="${'seat-' + seat.id}"
+                                           class="seat-label"
+                                           th:classappend="${#lists.contains(occupiedSeatIds, seat.id)} ? 'occupied' : ''">
+                                        <span th:text="${seat.seatNumber}"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="walkway-external_r right">
+                            <div class="floor-texture"></div>
+                            <div class="aisle-led"></div>
+                        </div>
+
                     </div>
                 </div>
-            </div>
 
-            <div class="legend">
-                <div class="legend-item"><div class="legend-box" style="background: var(--seat-free); border: 1px solid var(--border-gray);"></div> Available</div>
-                <div class="legend-item"><div class="legend-box" style="background: var(--primary-red);"></div> Selected</div>
-                <div class="legend-item"><div class="legend-box" style="background: var(--seat-occ);"></div> Taken</div>
-            </div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-box available"></div> AVAILABLE</div>
+                    <div class="legend-item"><div class="legend-box selected"></div> SELECTED</div>
+                    <div class="legend-item"><div class="legend-box taken"></div> TAKEN</div>
+                </div>
 
-            <div class="btn-group">
-                <a th:href="@{/MoviePage/{id}(id=${movie.id})}" class="back-btn">Cancel</a>
-                <button type="submit" class="confirm-btn" th:text="${isEditing} ? 'Confirm Change' : 'Reserve Seat'">Reserve Seat</button>
-            </div>
-        </form>
+                <div class="btn-group">
+                    <a th:href="@{/MoviePage/{id}(id=${movie.id})}" class="btn-industrial btn-outline">
+                        <span class="btn-inner">CANCEL</span>
+                    </a>
+                    <button type="submit" class="btn-industrial btn-red">
+                        <span class="btn-inner" th:text="${isEditing} ? 'CONFIRM_CHANGE' : 'RESERVE_SEATS'">RESERVE_SEATS</span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+</main>
+
+<script>
+    function handleSingleSelect(checkbox) {
+        if (checkbox.checked) {
+            const checkboxes = document.getElementsByName('seatIds');
+            checkboxes.forEach((item) => {
+                if (item !== checkbox) item.checked = false;
+            });
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --primary-red: #ff0000;
+        --dark-red: #b20710;
+        --bg-black: #0a0a0b;
+        --panel-bg: #111113;
+        --border-gray: #252527;
+        --seat-free: #222222;
+        --seat-occ: #0a0a0a;
+        --font-mono: 'Roboto Mono', monospace;
+    }
+
+    body { background-color: var(--bg-black); color: white; font-family: 'Roboto', sans-serif; margin: 0; }
+
+    .site-entry { animation: sitePowerOn 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes sitePowerOn {
+        0% { opacity: 0; filter: brightness(0.5) blur(10px); }
+        100% { opacity: 1; filter: brightness(1) blur(0); }
+    }
+
+    .tech-grid-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+        background-size: 50px 50px; pointer-events: none; z-index: 1;
+    }
+
+    .main-content { position: relative; z-index: 2; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+
+    .terminal-module {
+        background: var(--panel-bg);
+        border: 1px solid var(--border-gray);
+        width: 100%; max-width: 1000px;
+        box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    }
+
+    .module-header {
+        background: #1a1a1c; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center;
+        border-bottom: 1px solid var(--border-gray); font-family: var(--font-mono); font-size: 0.65rem; color: #555;
+    }
+
+    .header-exit {
+        background: var(--primary-red); color: white; text-decoration: none;
+        width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;
+        font-weight: 900; font-size: 0.6rem;
+    }
+
+    .module-body { padding: 40px 60px; text-align: center; }
+
+    .selection-header {
+        margin-bottom: 40px; display: inline-block;
+        border-left: 4px solid var(--primary-red); padding: 0 20px; text-align: left;
+    }
+    .selection-header h2 { font-size: 2.2rem; font-weight: 900; text-transform: uppercase; margin: 0; letter-spacing: -1px; }
+    .movie-runtime { color: var(--primary-red); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; margin-top: 5px; font-family: var(--font-mono); }
+
+    .screen-container {
+        perspective: 1000px;
+        margin: 20px 0 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .screen-housing {
+        width: 75%;
+        height: 12px;
+        background: #1a1a1c;
+        border: 1px solid var(--border-gray);
+        position: relative;
+        border-radius: 50% / 100% 100% 0 0;
+        transform: rotateX(-20deg);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+
+    .screen-surface {
+        position: absolute;
+        top: 2px;
+        left: 5%;
+        width: 90%;
+        height: 6px;
+        background: linear-gradient(to bottom, #fff 0%, #d1d1d1 100%);
+        border-radius: 50% / 100% 100% 0 0;
+        box-shadow: 0 0 15px #fff, 0 0 30px rgba(255, 255, 255, 0.4);
+    }
+
+    .screen-label { color: #444; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 6px; margin-top: 15px; font-weight: 900; font-family: var(--font-mono); }
+
+    .seat-grid-wrapper { perspective: 1500px; margin-bottom: 40px; display: flex; justify-content: center; overflow: visible; }
+    .perspective-floor { display: flex; align-items: stretch; gap: 30px; transform: rotateX(20deg); transform-style: preserve-3d; }
+
+    .walkway-external_l { width: 50px; position: relative; background: #0d0d0f; border: 1px solid #1a1a1c; overflow: hidden; }
+    .walkway-external_r { width: 50px; position: relative; background: #0d0d0f; border: 1px solid #1a1a1c; overflow: hidden; }
+
+    .floor-texture { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02) 10px, transparent 10px, transparent 20px); }
+    .aisle-led { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--primary-red); box-shadow: 0 0 10px var(--primary-red); opacity: 0.3; }
+
+    .tactical-plane { position: relative; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-gray); padding: 30px; display: inline-block; transform-style: preserve-3d; }
+    .corner { position: absolute; width: 15px; height: 15px; border: 2px solid var(--primary-red); z-index: 5; }
+    .top-left { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+    .top-right { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+    .bottom-left { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+    .bottom-right { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+    .seat-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; width: 600px; }
+
+    /* Changed selector name to match new class */
+    .seat-checkbox { display: none; }
+
+    .seat-label {
+        width: 100%; aspect-ratio: 1.1 / 1; background: var(--seat-free);
+        border: 1px solid var(--border-gray); border-bottom: 13px solid #000;
+        border-radius: 2px; display: flex; align-items: center; justify-content: center;
+        cursor: pointer; font-weight: 900; font-size: 0.8rem; color: #555; transition: all 0.1s;
+        padding: 14px; box-sizing: border-box;
+    }
+
+    .seat-label:hover {
+        border: 1px solid var(--border-gray); border-bottom: 7px solid #000;
+        color: #939393;
+    }
+
+    .seat-checkbox:checked + .seat-label {
+        background: var(--primary-red); color: white; border-color: #ff4d4d;
+        border-bottom: 2px solid var(--dark-red); transform: translateY(3px);
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+    }
+
+    .seat-label.occupied { background: var(--seat-occ); border-color: #1a1a1a; color: #222; cursor: not-allowed; border-bottom: 2px solid #000; opacity: 0.6; }
+
+    .legend { display: inline-flex; gap: 20px; padding: 12px 30px; background: #0a0a0a; border: 1px solid var(--border-gray); margin-bottom: 40px; font-family: var(--font-mono); }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.65rem; font-weight: 900; color: #666; }
+    .legend-box { width: 12px; height: 12px; border: 1px solid var(--border-gray); }
+    .legend-box.available { background: var(--seat-free); }
+    .legend-box.selected { background: var(--primary-red); }
+    .legend-box.taken { background: var(--seat-occ); }
+
+    .btn-group { display: flex; gap: 15px; max-width: 600px; margin: 0 auto; align-items: flex-end; }
+    .btn-industrial {
+        flex: 1; text-decoration: none; border: none; padding: 0; cursor: pointer;
+        font-family: var(--font-mono); font-weight: 900; position: relative;
+        background: transparent; clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+    }
+    .btn-inner { display: block; padding: 18px 20px; transition: all 0.1s; text-align: center; font-size: 0.85rem; line-height: 1.2; width: 100%; box-sizing: border-box; }
+    .btn-red { background: var(--dark-red); }
+    .btn-red .btn-inner { background: var(--primary-red); color: white; transform: translateY(-5px); }
+    .btn-outline { background: #222; }
+    .btn-outline .btn-inner { background: var(--panel-bg); color: var(--primary-red); border: 1px solid var(--primary-red); transform: translateY(-5px); }
+</style>
 
 </body>
 </html>

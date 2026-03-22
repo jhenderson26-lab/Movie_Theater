@@ -76,6 +76,18 @@
             <input type="number" id="show_time_minute" name="show_time_minute" th:value="${Movielist.show_time_minute}" min="0" max="59" required>
         </div>
 
+        <!-- Showtime Hour -->
+        <div class="form-group">
+            <label for="runtime_hour">Runtime (Hour)</label>
+            <input type="number" id="runtime_hour" name="runtime_hour" th:value="${Movielist.runtime_hour}" min="0" required>
+        </div>
+
+        <!-- Showtime Minute -->
+        <div class="form-group">
+            <label for="runtime_minute">Runtime (Minute)</label>
+            <input type="number" id="runtime_minute" name="runtime_minute" th:value="${Movielist.runtime_minute}" min="0" max="59" required>
+        </div>
+
         <!-- Cost -->
         <div class="form-group">
             <label for="cost">Streaming/Rental Cost ($)</label>
