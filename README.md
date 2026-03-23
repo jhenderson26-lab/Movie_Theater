@@ -1,73 +1,62 @@
-Cinema Ticketing System
-A full-stack web application that allows users to browse movies, select specific seats in a cinema room, and purchase tickets. The system features role-based access, offering different flows for standard Users and Administrators.
+Cinema Booking System
+A full-stack movie theater management and ticket booking application. This system allows users to browse current films, select specific seats in various cinema rooms, and manage their ticket purchases, while providing administrators with tools to manage the theater's inventory.
 
-📋 Table of Contents
-Overview
+📽️ Project Overview
+This application provides a seamless experience for moviegoers. It features a robust backend built with Spring Boot and a dynamic frontend that visualizes theater layouts, movie listings, and user carts.
 
-Features
+Key Features
+User Authentication: Secure Sign-up and Login functionality.
 
-Tech Stack
+Dynamic Movie Listings: Browse movies with real-time updates from the database.
 
-Application Flow
+Interactive Seating Chart: Visual representation of cinema rooms where users can see available vs. occupied seats.
 
-Implementation Details
+Shopping Cart: Add tickets to a cart before final purchase.
 
-📖 Overview
-This project is an interactive movie theater booking platform. Users can browse currently showing movies, select a cinema room, and pick their preferred seats using a visual seating chart. The application manages seat occupancy, shopping carts, and user ticket histories.
+Ticket History: Track previous purchases and view digital tickets.
 
-✨ Features
-Standard User
-Authentication: Sign up and log in.
+Admin Dashboard: Dedicated tools for adding/editing movies, managing cinema rooms, and modifying tickets.
 
-Browse: View all available movies and cinema rooms.
+📐 Design & Logic
+Flowchart Navigation
+The application supports two primary user journeys:
 
-Seat Selection: View visual layouts of rooms to see available and occupied seats.
+User Flow: Browse Movies/Rooms → Select Seat → Create Ticket → Cart → Ticket History.
 
-Cart Management: Add selected seats to a personal cart before checking out.
+Admin Flow: All User capabilities + Add/Edit Movie listings, Room configurations, and Ticket records.
 
-Ticket History: View a log of all previously purchased tickets.
+UI/UX Design
+The interface is designed for high-resolution displays (MacBook Air mockups) with a focus on a "dark mode" cinema aesthetic:
 
-Administrator
-Movie Management: Add new movies to the roster or edit existing movie details.
+Home Page: Grid view of active movies in different rooms.
 
-Room Management: Create new cinema rooms or edit existing room configurations.
+Seat Selection: Color-coded grid (Green for available, Red for occupied).
 
-Ticket Management: View and edit ticket histories across the application.
+Management: Clean, list-based views for editing movie metadata (Title, Release Date, Description).
 
-💻 Tech Stack
-Backend: Java, Spring Boot (Spring MVC)
+💻 Implementation Details
+The backend follows the Model-View-Controller (MVC) pattern using Spring Boot.
 
-Frontend: HTML, CSS, Thymeleaf (View templates)
+Core Controllers
+Homepage (/): Fetches the full movie list and checks for an active session to display personalized user greetings.
 
-Data Handling: Service-oriented architecture (movieService, roomService, ticketService, userService)
+MoviePage (/MoviePage/{movieId}): Dynamically retrieves specific film details using path variables.
 
-🔄 Application Flow
-User Journey
-Home/Login: The user lands on the homepage and logs in.
+SeatSelection (/TicketBooking/{movieId}): * Fetches the primary room for the selected movie.
 
-Selection: The user navigates to "All Movies" or "All Rooms".
+Identifies occupiedSeatIds to prevent double-booking.
 
-Movie Detail: The user selects a movie to view its specific page.
+Renders the interactive grid.
 
-Seat Booking: The user is presented with a room grid showing available seats for that movie.
+Cart Management (/AddToCart & /Cart): * POST mapping to create ticket entities and link them to the user's Principal profile.
 
-Cart: Clicking an available seat generates a ticket and adds it to the user's cart.
+GET mapping to display all items currently in the user's cart.
 
-Checkout: The user purchases the ticket from the cart, updating their Ticket History.
+Technical Stack
+Backend: Java, Spring Boot, Spring Data JPA
 
-🛠 Implementation Details (Key Endpoints)
-The backend routing is primarily handled by the ViewController. Below are the core mappings:
+Security: Principal-based authentication
 
-GET / (Homepage): Retrieves all movies from the database and displays them. If a user is authenticated, it binds their username to the view.
+Frontend: HTML5, CSS3, Thymeleaf Templates
 
-GET /AllMovies: Retrieves the complete list of movies via the movieService and renders the Movie/AllMovies view.
-
-GET /MoviePage/{movieId}: Extracts the unique movie ID from the URL, fetches the specific movie details, and dynamically displays the Movie/MoviePage view.
-
-GET /Rooms: Fetches a list of all cinema rooms from the roomService and renders the Room view.
-
-GET /TicketBooking/{movieId}: The core booking page. It fetches the movie, the primary room's seating chart, and a list of currently occupied seat IDs. This data is passed to the view to dynamically render the seat selection grid.
-
-POST /AddToCart: Accepts an optional movieId and seatId. It identifies the current user via the Principal object, creates a new ticket for that seat/movie, and redirects the user to their cart.
-
-GET /Cart: Retrieves all tickets associated with the currently authenticated user's cart via the ticketService and displays them on the Cart view.
+Database: Relational Database (SQL-based)
