@@ -1,6 +1,7 @@
 package org.example.movie_theater.Services;
 
 import jakarta.transaction.Transactional;
+import org.example.movie_theater.Entities.Movie;
 import org.example.movie_theater.Entities.Room;
 import org.example.movie_theater.Entities.Seat;
 import org.example.movie_theater.Repos.RoomRepository;
@@ -57,8 +58,14 @@ public class RoomService {
 
     @Transactional
     public void deleteRoom(Long id) {
-        if (roomRepository.existsById(id)) {
-            roomRepository.deleteById(id);
+        Room room = roomRepository.findById(id).orElse(null);
+        if (room != null) {
+            for (Movie movie : room.getMovies()) {
+                movie.getRooms().remove(room);
+            }
+            room.getMovies().clear();
+
+            roomRepository.save(room);
+            roomRepository.delete(room);
         }
-    }
-}
+    }}
