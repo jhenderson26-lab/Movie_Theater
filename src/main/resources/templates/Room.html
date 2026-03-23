@@ -179,8 +179,7 @@
                     <input type="hidden" name="id" th:value="${room.id}">
                     <button type="submit" class="admin-btn btn-edit">Edit_Facility</button>
                 </form>
-
-                <form th:action="@{/DeleteRoom}" method="post" style="margin: 0;"> <input type="hidden" name="id" th:value="${room.id}">
+                <form th:action="@{/DeleteRoom/{id}(id=${room.id})}" method="post" style="margin: 0;">
                     <button type="submit" class="admin-btn btn-delete">X</button>
                 </form>
             </div>

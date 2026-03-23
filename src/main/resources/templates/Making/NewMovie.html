@@ -1,172 +1,239 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
-    <title>Movie Theater</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: common-head}">
+    <title>Initialize Record // RedTicket</title>
 </head>
 <body>
-<div class="form-container">
-    <style>
-        :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --accent-color: #e50914;
-            --text-color: #ffffff;
-            --input-bg: #2b2b2b;
-        }
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
+<div th:replace="~{fragments :: navbar}"></div>
 
-        .form-container {
-            background-color: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            width: 100%;
-            max-width: 600px;
-        }
+<main class="rt-main-content">
+    <div class="rt-terminal-module">
 
-        h1 { text-align: center; margin-bottom: 2rem; }
-
-        form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        .form-group { display: flex; flex-direction: column; }
-        .full-width { grid-column: span 2; }
-
-        label { font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb; }
-
-        input, select, textarea {
-            background-color: var(--input-bg);
-            border: 1px solid #333;
-            border-radius: 6px;
-            padding: 0.8rem;
-            color: white;
-            font-size: 1rem;
-        }
-
-        /* Button Layout Fixes */
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            align-items: stretch;
-        }
-
-        .back-btn, .submit-btn {
-            padding: 1rem;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .back-btn {
-            flex: 1;
-            background-color: #3d3d3d;
-            color: white;
-        }
-
-        .submit-btn {
-            flex: 2; /* Keeps the red button larger */
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .back-btn:hover { background-color: #4d4d4d; }
-        .submit-btn:hover { background-color: #b20710; }
-    </style>
-    <h1>Add New Movie</h1>
-    <form th:action="@{/AddedNewMovie}" method="POST">
-        <!-- Movie Poster -->
-
-
-        <!-- Title -->
-        <div class="form-group">
-            <label for="title">Movie Title</label>
-            <input type="text" id="title" name="title" placeholder="e.g. Inception" required>
+        <div class="rt-module-header">
+            <span class="rt-header-text">DATABASE_MGMT_V2.0 // NEW_RECORD_ENTRY</span>
+            <div class="rt-header-status-light"></div>
         </div>
 
-        <!-- Release Year -->
-        <div class="form-group">
-            <label for="releaseYear">Release Year</label>
-            <input type="date" id="releaseYear" name="releaseYear" required>
-        </div>
+        <div class="rt-module-body">
+            <header class="rt-auth-header">
+                <div class="rt-status-tag">
+                    <span class="rt-status-dot"></span> // RECORD_INITIALIZATION
+                </div>
+                <h2 class="rt-terminal-title">ADD_NEW_MOVIE</h2>
+            </header>
 
-        <!-- Genre -->
-        <div class="form-group">
-            <label for="genre">Genre</label>
-            <select id="genre" name="genre" required>
-                <option value="">Select Genre</option>
-                <option value="action">Action</option>
-                <option value="comedy">Comedy</option>
-                <option value="drama">Drama</option>
-                <option value="sci-fi">Sci-Fi</option>
-                <option value="horror">Horror</option>
-            </select>
-        </div>
-        <div class="form-group"> <!-- Added class for your CSS layout -->
-            <label for="roomSelect">Room</label>
-            <select name="room" id="roomSelect" required>
-                <!-- The empty value="" ensures the 'required' attribute works -->
-                <option value="" disabled selected>-- Choose a Room --</option>
+            <form th:action="@{/AddedNewMovie}" method="POST" class="rt-industrial-form">
 
-                <!-- Ensure 'Roomlist' matches your Controller's model key -->
-                <option th:each="room : ${Roomlist}"
-                        th:value="${room.id}"
-                        th:text="${room.name}">
-                </option>
-            </select>
-        </div>
+                <div class="rt-input-group full-width">
+                    <label class="rt-input-label">SET_METADATA // TITLE</label>
+                    <div class="rt-input-wrapper">
+                        <input type="text" name="title" class="rt-terminal-input" placeholder="e.g. INCEPTION" required autofocus>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
 
+                <div class="rt-input-group">
+                    <label class="rt-input-label">CATEGORY_TAG</label>
+                    <div class="rt-input-wrapper">
+                        <select name="genre" class="rt-terminal-input" required>
+                            <option value="" disabled selected>-- SELECT CATEGORY --</option>
+                            <option value="action">ACTION</option>
+                            <option value="comedy">COMEDY</option>
+                            <option value="drama">DRAMA</option>
+                            <option value="sci-fi">SCI-FI</option>
+                            <option value="horror">HORROR</option>
+                        </select>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
 
-        <!-- Duration Hours -->
-        <div class="form-group">
-            <label for="show_time_hour">Showtime (Hour)</label>
-            <input type="number" id="show_time_hour" name="show_time_hour" min="0" placeholder="0" required>
-        </div>
+                <div class="rt-input-group">
+                    <label class="rt-input-label">RELEASE_STAMP</label>
+                    <div class="rt-input-wrapper">
+                        <input type="date" name="releaseYear" class="rt-terminal-input" required>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
 
-        <!-- Duration Minutes -->
-        <div class="form-group">
-            <label for="show_time_minute">Showtime (Minute)</label>
-            <input type="number" id="show_time_minute" name="show_time_minute" min="0" max="59" placeholder="0" required>
-        </div>
-        <!-- Cost -->
-        <div class="form-group">
-            <label for="cost">Streaming/Rental Cost ($)</label>
-            <input type="number" id="cost" name="cost" step="0.01" placeholder="0.00" required>
-        </div>
-        <!-- Description -->
-        <div class="form-group full-width">
-            <label for="description">Description</label>
-            <textarea id="description" name="description" rows="4" placeholder="Briefly describe the movie..." required></textarea>
-        </div>
+                <div class="rt-input-group">
+                    <label class="rt-input-label">SHOW_HOUR (24H)</label>
+                    <div class="rt-input-wrapper">
+                        <input type="number" name="show_time_hour" class="rt-terminal-input" min="0" max="23" placeholder="00" required>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
 
-        <!-- Consolidated Button Group -->
-        <div class="button-group full-width">
-            <button type="button" class="back-btn" onclick="history.back()">Back</button>
-            <button type="submit" class="submit-btn">Add Movie</button>
+                <div class="rt-input-group">
+                    <label class="rt-input-label">SHOW_MINUTE</label>
+                    <div class="rt-input-wrapper">
+                        <input type="number" name="show_time_minute" class="rt-terminal-input" min="0" max="59" placeholder="00" required>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
+
+                <div class="rt-input-group">
+                    <label class="rt-input-label">ASSIGNED_FACILITY</label>
+                    <div class="rt-input-wrapper">
+                        <select name="room" class="rt-terminal-input" required>
+                            <option value="" disabled selected>-- SELECT ROOM --</option>
+                            <option th:each="room : ${Roomlist}"
+                                    th:value="${room.id}"
+                                    th:text="${room.name}">
+                            </option>
+                        </select>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
+
+                <div class="rt-input-group">
+                    <label class="rt-input-label">UNIT_VAL_USD ($)</label>
+                    <div class="rt-input-wrapper">
+                        <input type="number" name="cost" step="0.01" class="rt-terminal-input" placeholder="0.00" required>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
+
+                <div class="rt-input-group full-width">
+                    <label class="rt-input-label">SYSTEM_DESCRIPTION_LOG</label>
+                    <div class="rt-input-wrapper">
+                        <textarea name="description" class="rt-terminal-input" rows="4" placeholder="ENTER SYSTEM DESCRIPTION..." required></textarea>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
+
+                <div class="rt-form-footer full-width">
+                    <a href="javascript:history.back()" class="rt-btn-cancel">ABORT_ENTRY</a>
+                    <button type="submit" class="rt-btn-industrial">
+                        <span class="rt-btn-inner">INITIALIZE_RECORD</span>
+                    </button>
+                </div>
+            </form>
         </div>
-    </form>
-</div>
+    </div>
+</main>
+
+<style>
+    /* COMPONENT STYLES PRE-LOCKED FOR REDTICKET INDUSTRIAL */
+    .rt-main-content {
+        padding: 110px 20px 60px; /* Buffer for fixed navbar */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+    }
+
+    .rt-terminal-module {
+        background: #111113;
+        border: 1px solid #252527;
+        width: 100%;
+        max-width: 650px;
+        box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    }
+
+    .rt-module-header {
+        background: #1a1a1c;
+        padding: 12px 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #252527;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.65rem;
+        color: #555;
+    }
+
+    .rt-header-status-light {
+        width: 8px; height: 8px;
+        background: #00ff00;
+        border-radius: 50%;
+        box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+    }
+
+    .rt-module-body { padding: 45px; }
+
+    .rt-auth-header { margin-bottom: 35px; }
+    .rt-status-tag { font-family: 'Roboto Mono', monospace; color: #444; font-size: 0.7rem; margin-bottom: 10px; }
+    .rt-status-dot { display: inline-block; width: 6px; height: 6px; background: var(--primary-red); border-radius: 50%; margin-right: 8px; }
+    .rt-terminal-title { font-size: 2.2rem; font-weight: 900; text-transform: uppercase; margin: 0; letter-spacing: -1px; }
+
+    /* FORM GRID */
+    .rt-industrial-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .full-width { grid-column: span 2; }
+
+    .rt-input-group { text-align: left; }
+    .rt-input-label { display: block; font-family: 'Roboto Mono', monospace; font-size: 0.7rem; color: #666; margin-bottom: 10px; font-weight: 700; }
+
+    .rt-input-wrapper { position: relative; }
+    .rt-terminal-input {
+        width: 100%;
+        background: #080809;
+        border: 1px solid #252527;
+        padding: 14px;
+        color: white;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.9rem;
+        box-sizing: border-box;
+    }
+
+    .rt-focus-indicator {
+        position: absolute;
+        bottom: 0; left: 50%;
+        width: 0; height: 2px;
+        background: var(--primary-red);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .rt-terminal-input:focus { outline: none; border-color: #444; }
+    .rt-terminal-input:focus ~ .rt-focus-indicator { width: 100%; left: 0; }
+
+    /* MECHANICAL BUTTONS */
+    .rt-form-footer {
+        display: flex;
+        gap: 20px;
+        margin-top: 35px;
+        align-items: center;
+    }
+
+    .rt-btn-cancel {
+        flex: 1;
+        text-align: center;
+        color: #444;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.75rem;
+        font-weight: 900;
+        text-decoration: none;
+        border: 1px solid #222;
+        padding: 15px;
+        transition: all 0.2s;
+    }
+
+    .rt-btn-cancel:hover { color: #fff; border-color: #666; }
+
+    .rt-btn-industrial {
+        flex: 2;
+        border: none;
+        cursor: pointer;
+        background: #800000;
+        padding: 0;
+        clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+    }
+
+    .rt-btn-inner {
+        display: block;
+        padding: 18px;
+        transition: transform 0.1s ease;
+        text-align: center;
+        font-family: 'Roboto Mono', monospace;
+        font-weight: 900;
+        background: var(--primary-red);
+        color: white;
+        transform: translateY(-5px);
+    }
+
+    .rt-btn-industrial:active .rt-btn-inner { transform: translateY(0); }
+    .rt-btn-industrial:hover .rt-btn-inner { filter: brightness(1.1); }
+</style>
+
 </body>
 </html>

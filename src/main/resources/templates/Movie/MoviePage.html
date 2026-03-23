@@ -16,6 +16,7 @@
             --accent-red: #e50914;
             --border-muted: #222;
             --text-dim: #666;
+            --disabled-gray: #333;
         }
 
         body {
@@ -39,7 +40,6 @@
             justify-content: center;
         }
 
-        /* Page Header matching Floor Plan */
         .page-header {
             margin-bottom: 40px;
             border-left: 4px solid var(--accent-red);
@@ -61,7 +61,6 @@
             letter-spacing: 2px;
         }
 
-        /* Technical Specification Module */
         .spec-module {
             background: var(--module-bg);
             border: 1px solid var(--border-muted);
@@ -70,7 +69,6 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        /* Top Module Bar */
         .module-bar {
             padding: 15px 30px;
             background: #1c1c1c;
@@ -95,7 +93,6 @@
             text-transform: uppercase;
         }
 
-        /* Main Body with Vertical Accent */
         .module-body {
             padding: 40px;
             border-left: 4px solid #333;
@@ -124,7 +121,6 @@
             margin: 0;
         }
 
-        /* Data Grid for Screening Info */
         .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -160,17 +156,11 @@
             color: var(--accent-red);
         }
 
-        /* Action Footer */
         .module-footer {
             padding: 30px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 15px;
         }
 
         .btn-book {
@@ -185,10 +175,20 @@
             transition: background 0.2s;
             border: none;
             cursor: pointer;
+            display: inline-block;
         }
 
         .btn-book:hover {
             background: #b20710;
+        }
+
+        /* Logic for Seating TBD state */
+        .btn-disabled {
+            background: var(--disabled-gray);
+            color: #555;
+            cursor: not-allowed;
+            pointer-events: none;
+            border: 1px solid #222;
         }
 
         .btn-back {
@@ -208,7 +208,6 @@
             color: #fff;
         }
 
-        /* Error state */
         .error-card {
             text-align: center;
             padding: 100px 40px;
@@ -246,7 +245,7 @@
                 <div class="grid-item">
                     <span class="item-label">Assigned Location</span>
                     <span class="item-value" th:if="${not #lists.isEmpty(movie.rooms)}" th:text="${movie.rooms[0].name}">Theater 1</span>
-                    <span class="item-value" th:unless="${not #lists.isEmpty(movie.rooms)}">TBD</span>
+                    <span class="item-value" th:unless="${not #lists.isEmpty(movie.rooms)}" style="color: #444;">TBD</span>
                 </div>
                 <div class="grid-item">
                     <span class="item-label">Access Rate</span>
@@ -254,16 +253,24 @@
                 </div>
                 <div class="grid-item">
                     <span class="item-label">Production Year</span>
-                    <span class="item-value" th:text="${#temporals.format(movie.releaseYear, 'yyyy')}">2026</span>
+                    <span class="item-value" th:text="${movie.releaseYear}">2026</span>
                 </div>
             </div>
 
             <div class="module-footer">
                 <a th:href="@{/AllMovies}" class="btn-back">Return to Program</a>
+
                 <div class="btn-group">
-                    <a th:href="@{/TicketBooking/{id}(id=${movie.id})}" class="btn-book">
+                    <a th:if="${not #lists.isEmpty(movie.rooms)}"
+                       th:href="@{/TicketBooking/{id}(id=${movie.id})}"
+                       class="btn-book">
                         Reserve Seating &raquo;
                     </a>
+
+                    <button th:unless="${not #lists.isEmpty(movie.rooms)}"
+                            class="btn-book btn-disabled">
+                        Seating Unavailable
+                    </button>
                 </div>
             </div>
         </div>

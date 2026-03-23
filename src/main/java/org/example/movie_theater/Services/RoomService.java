@@ -1,5 +1,6 @@
 package org.example.movie_theater.Services;
 
+import jakarta.transaction.Transactional;
 import org.example.movie_theater.Entities.Room;
 import org.example.movie_theater.Entities.Seat;
 import org.example.movie_theater.Repos.RoomRepository;
@@ -54,5 +55,10 @@ public class RoomService {
         roomRepository.deleteBySeatIdAndRoomId(seatId, roomId);
     }
 
-
+    @Transactional
+    public void deleteRoom(Long id) {
+        if (roomRepository.existsById(id)) {
+            roomRepository.deleteById(id);
+        }
+    }
 }

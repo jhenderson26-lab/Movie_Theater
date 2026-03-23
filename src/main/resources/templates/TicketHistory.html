@@ -198,8 +198,8 @@
     <p class="header-sub">Your upcoming and past movie bookings</p>
   </header>
 
-  <div th:if="${not #lists.isEmpty(history)}">
-    <div th:each="ticket : ${history}" class="ticket-card">
+  <div th:if="${not #lists.isEmpty(tickets)}">
+    <div th:each="ticket : ${tickets}" class="ticket-card">
 
       <div class="ticket-main">
         <span class="ticket-id" th:text="'Ticket #' + ${ticket.id}">Ticket #0000</span>
@@ -225,14 +225,14 @@
         <div class="status-text">Confirmed</div>
         <div class="stub-price" th:text="'$' + ${#numbers.formatDecimal(ticket.cost, 1, 2)}">$0.00</div>
 
-        <form th:action="@{/tickets/delete/{id}(id=${ticket.id})}" method="post" style="width: 100%;">
+        <form th:action="@{/DeleteTicket/{id}(id=${ticket.id})}" method="post" style="width: 100%;">
           <button type="submit" class="cancel-btn">Cancel</button>
         </form>
       </div>
     </div>
   </div>
 
-  <div th:if="${#lists.isEmpty(history)}" class="empty-state">
+  <div th:if="${#lists.isEmpty(tickets)}" class="empty-state">
     <p>No tickets found</p>
     <a th:href="@{/AllMovies}" style="color: var(--accent-red); text-decoration: none; font-weight: bold; margin-top: 15px; display: inline-block; text-transform: uppercase; font-size: 0.8rem;">Browse Movies</a>
   </div>

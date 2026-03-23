@@ -1,18 +1,209 @@
-<form th:action="@{/AddedNewRoom}" method="post">
-    <h1>Room Name:</h1>
-    <input type="text" name="name" required/>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: common-head}">
+    <title>Facility Provisioning // RedTicket</title>
+</head>
+<body>
 
-    <h1>Seats:</h1>
-    <input type="number" name="capacity" min="1" required/>
+<div th:replace="~{fragments :: navbar}"></div>
 
-    <h1>Assign Movies:</h1>
-    <select name="movieIds" id="movieSelect" multiple="multiple">
-        <option value="" disabled>-- Choose Movies (Hold Ctrl to select multiple) --</option>
-        <option th:each="movie : ${Movielist}"
-                th:value="${movie.id}"
-                th:text="${movie.title}">
-        </option>
-    </select>
+<main class="rt-main-content">
+    <div class="rt-terminal-module">
 
-    <button type="submit">Add Room</button>
-</form>
+        <div class="rt-module-header">
+            <span class="rt-header-text">FACILITY_PROVISIONING_V2.0 // NEW_UNIT_INIT</span>
+            <div class="rt-header-status-light"></div>
+        </div>
+
+        <div class="rt-module-body">
+            <header class="rt-auth-header">
+                <div class="rt-status-tag">
+                    <span class="rt-status-dot"></span> // HARDWARE_CONFIGURATION
+                </div>
+                <h2 class="rt-terminal-title">ADD_ROOM</h2>
+            </header>
+
+            <form th:action="@{/AddedNewRoom}" method="post" class="rt-industrial-form">
+
+                <div class="rt-input-group full-width">
+                    <label class="rt-input-label">SET_FACILITY_IDENTIFIER</label>
+                    <div class="rt-input-wrapper">
+                        <input type="text" name="name" class="rt-terminal-input" placeholder="e.g. THEATER 01" required autofocus>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
+
+                <div class="rt-input-group full-width">
+                    <label class="rt-input-label">UNIT_SEAT_CAPACITY // MIN_VAL: 1</label>
+                    <div class="rt-input-wrapper">
+                        <input type="number" name="capacity" class="rt-terminal-input" min="1" placeholder="Enter total seats" required>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
+
+                <div class="rt-input-group full-width">
+                    <label class="rt-input-label">PROGRAM_LINKAGE // MULTI_SELECT_ENABLED</label>
+                    <div class="rt-input-wrapper">
+                        <select name="movieIds" id="movieSelect" class="rt-terminal-input rt-multi-select" multiple="multiple" size="5">
+                            <option value="" disabled>-- HOLD [CTRL] FOR MULTIPLE ASSIGNMENTS --</option>
+                            <option th:each="movie : ${Movielist}"
+                                    th:value="${movie.id}"
+                                    th:text="${movie.title}">
+                            </option>
+                        </select>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
+
+                <div class="rt-form-footer full-width">
+                    <a href="javascript:history.back()" class="rt-btn-cancel">ABORT_INIT</a>
+                    <button type="submit" class="rt-btn-industrial">
+                        <span class="rt-btn-inner">PROVISION_UNIT</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<style>
+    /* REUSING TERMINAL MODULE CORE STYLES */
+    .rt-main-content {
+        padding: 100px 20px 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+    }
+
+    .rt-terminal-module {
+        background: #111113;
+        border: 1px solid #252527;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    }
+
+    .rt-module-header {
+        background: #1a1a1c;
+        padding: 12px 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #252527;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.65rem;
+        color: #666;
+    }
+
+    .rt-header-status-light {
+        width: 8px; height: 8px;
+        background: #00ff00;
+        border-radius: 50%;
+        box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+    }
+
+    .rt-module-body { padding: 50px; }
+
+    .rt-auth-header { margin-bottom: 35px; }
+    .rt-status-tag { font-family: 'Roboto Mono', monospace; color: #666; font-size: 0.7rem; margin-bottom: 10px; }
+    .rt-status-dot { display: inline-block; width: 6px; height: 6px; background: var(--primary-red); border-radius: 50%; margin-right: 8px; }
+    .rt-terminal-title { font-size: 2rem; font-weight: 900; text-transform: uppercase; margin: 0; letter-spacing: -1px; }
+
+    .rt-industrial-form { display: grid; grid-template-columns: 1fr; gap: 25px; }
+    .full-width { grid-column: span 1; }
+
+    .rt-input-group { text-align: left; }
+    .rt-input-label { display: block; font-family: 'Roboto Mono', monospace; font-size: 0.7rem; color: #555; margin-bottom: 10px; font-weight: 700; }
+
+    .rt-input-wrapper { position: relative; }
+
+    .rt-terminal-input {
+        width: 100%;
+        background: #080809;
+        border: 1px solid #252527;
+        padding: 16px;
+        color: white;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.9rem;
+        box-sizing: border-box;
+    }
+
+    /* Multi-select specific height and scroll */
+    .rt-multi-select {
+        height: auto;
+        padding: 10px;
+    }
+
+    .rt-multi-select option {
+        padding: 8px;
+        background: #080809;
+        color: #888;
+    }
+
+    .rt-multi-select option:checked {
+        background: var(--primary-red) !important;
+        color: #000 !important;
+    }
+
+    .rt-focus-indicator {
+        position: absolute;
+        bottom: 0; left: 50%;
+        width: 0; height: 2px;
+        background: var(--primary-red);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .rt-terminal-input:focus { outline: none; border-color: #444; }
+    .rt-terminal-input:focus ~ .rt-focus-indicator { width: 100%; left: 0; }
+
+    /* 3D ACTION BUTTONS */
+    .rt-form-footer {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+        align-items: center;
+    }
+
+    .rt-btn-cancel {
+        flex: 1;
+        text-align: center;
+        color: #444;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.7rem;
+        font-weight: 900;
+        text-decoration: none;
+        border: 1px solid #222;
+        padding: 16px;
+        transition: all 0.2s;
+    }
+
+    .rt-btn-cancel:hover { color: #fff; border-color: #666; }
+
+    .rt-btn-industrial {
+        flex: 2;
+        border: none;
+        cursor: pointer;
+        background: #800000;
+        padding: 0;
+        clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+    }
+
+    .rt-btn-inner {
+        display: block;
+        padding: 16px;
+        transition: transform 0.1s ease;
+        text-align: center;
+        font-family: 'Roboto Mono', monospace;
+        font-weight: 900;
+        background: var(--primary-red);
+        color: white;
+        transform: translateY(-5px);
+    }
+
+    .rt-btn-industrial:active .rt-btn-inner { transform: translateY(0); }
+    .rt-btn-industrial:hover .rt-btn-inner { filter: brightness(1.1); }
+</style>
+
+</body>
+</html>

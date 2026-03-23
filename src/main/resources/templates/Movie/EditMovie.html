@@ -1,110 +1,250 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Movie</title>
-    <!-- CSS remains the same as your provided code -->
-    <style>
-        :root { --bg-color: #121212; --card-bg: #1e1e1e; --accent-color: #e50914; --text-color: #ffffff; --input-bg: #2b2b2b; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .form-container { background-color: var(--card-bg); padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; max-width: 600px; }
-        h1 { text-align: center; margin-bottom: 2rem; }
-        form { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-        .form-group { display: flex; flex-direction: column; }
-        .full-width { grid-column: span 2; }
-        label { font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb; }
-        input, select, textarea { background-color: var(--input-bg); border: 1px solid #333; border-radius: 6px; padding: 0.8rem; color: white; font-size: 1rem; }
-        .button-group { display: flex; gap: 1rem; margin-top: 1.5rem; }
-        .back-btn, .submit-btn { padding: 1rem; font-size: 1rem; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; transition: 0.3s; height: 50px; flex: 1; display: flex; align-items: center; justify-content: center; text-decoration: none;}
-        .back-btn { background-color: #3d3d3d; color: white; }
-        .submit-btn { flex: 2; background-color: var(--accent-color); color: white; }
-        .back-btn:hover { background-color: #4d4d4d; }
-        .submit-btn:hover { background-color: #b20710; }
-    </style>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: common-head}">
+    <title>Edit Record // RedTicket</title>
 </head>
 <body>
-<div class="form-container">
-    <h1>Edit Movie</h1>
-    <!-- Action updated to handle the specific movie ID -->
-    <form th:action="@{/UpdateMovie/{id}(id=${Movielist.id})}" method="POST">
 
-        <!-- Movie Title -->
-        <div class="form-group">
-            <label for="title">Movie Title</label>
-            <input type="text" id="title" name="title" th:value="${Movielist.title}" required>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<main class="rt-main-content">
+    <div class="rt-terminal-module">
+
+        <div class="rt-module-header">
+            <span class="rt-header-text">DATA_MANAGEMENT_V2.0 // RECORD_ID: <span th:text="${Movielist.id}">000</span></span>
+            <div class="rt-header-status-light"></div>
         </div>
 
-        <!-- Release Year -->
-        <div class="form-group">
-            <label for="releaseYear">Release Year</label>
-            <input type="date" id="releaseYear" name="releaseYear" th:value="${Movielist.releaseYear}" required>
-        </div>
+        <div class="rt-module-body">
+            <header class="rt-auth-header">
+                <div class="rt-status-tag">
+                    <span class="rt-status-dot"></span> // MOVIE_DATA_UPDATE
+                </div>
+                <h2 class="rt-terminal-title">EDIT_MOVIE</h2>
+            </header>
 
-        <!-- Genre -->
-        <div class="form-group">
-            <label for="genre">Genre</label>
-            <select id="genre" name="genre" required>
-                <option value="action" th:selected="${Movielist.genre == 'action'}">Action</option>
-                <option value="comedy" th:selected="${Movielist.genre == 'comedy'}">Comedy</option>
-                <option value="drama" th:selected="${Movielist.genre == 'drama'}">Drama</option>
-                <option value="sci-fi" th:selected="${Movielist.genre == 'sci-fi'}">Sci-Fi</option>
-                <option value="horror" th:selected="${Movielist.genre == 'horror'}">Horror</option>
-            </select>
-        </div>
+            <form th:action="@{/UpdateMovie/{id}(id=${Movielist.id})}" method="POST" class="rt-industrial-form">
 
-        <!-- Room Selection -->
-        <div class="form-group">
-            <label for="roomSelect">Room</label>
-            <select name="room" id="roomSelect" required>
-                <option th:each="room : ${Roomlist}"
-                        th:value="${room.id}"
-                        th:text="${room.name}"
-                        th:selected="${Movielist.rooms.contains(room)}">
-                </option>
-            </select>
-        </div>
+                <div class="rt-input-group full-width">
+                    <label class="rt-input-label">SET_METADATA // TITLE</label>
+                    <div class="rt-input-wrapper">
+                        <input type="text" name="title" class="rt-terminal-input" th:value="${Movielist.title}" required>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
 
-        <!-- Showtime Hour -->
-        <div class="form-group">
-            <label for="show_time_hour">Showtime (Hour)</label>
-            <input type="number" id="show_time_hour" name="show_time_hour" th:value="${Movielist.show_time_hour}" min="0" required>
-        </div>
+                <div class="rt-input-group">
+                    <label class="rt-input-label">CATEGORY_TAG</label>
+                    <div class="rt-input-wrapper">
+                        <select name="genre" class="rt-terminal-input" required>
+                            <option value="action" th:selected="${Movielist.genre == 'action'}">ACTION</option>
+                            <option value="comedy" th:selected="${Movielist.genre == 'comedy'}">COMEDY</option>
+                            <option value="drama" th:selected="${Movielist.genre == 'drama'}">DRAMA</option>
+                            <option value="sci-fi" th:selected="${Movielist.genre == 'sci-fi'}">SCI-FI</option>
+                            <option value="horror" th:selected="${Movielist.genre == 'horror'}">HORROR</option>
+                        </select>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
 
-        <!-- Showtime Minute -->
-        <div class="form-group">
-            <label for="show_time_minute">Showtime (Minute)</label>
-            <input type="number" id="show_time_minute" name="show_time_minute" th:value="${Movielist.show_time_minute}" min="0" max="59" required>
-        </div>
+                <div class="rt-input-group">
+                    <label class="rt-input-label">RELEASE_STAMP</label>
+                    <div class="rt-input-wrapper">
+                        <input type="date" name="releaseYear" class="rt-terminal-input" th:value="${Movielist.releaseYear}" required>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
 
-        <!-- Showtime Hour -->
-        <div class="form-group">
-            <label for="runtime_hour">Runtime (Hour)</label>
-            <input type="number" id="runtime_hour" name="runtime_hour" th:value="${Movielist.runtime_hour}" min="0" required>
-        </div>
+                <div class="rt-input-group">
+                    <label class="rt-input-label">SHOW_HOUR (24H)</label>
+                    <div class="rt-input-wrapper">
+                        <input type="number" name="show_time_hour" class="rt-terminal-input" th:value="${Movielist.show_time_hour}" min="0" max="23" required>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
 
-        <!-- Showtime Minute -->
-        <div class="form-group">
-            <label for="runtime_minute">Runtime (Minute)</label>
-            <input type="number" id="runtime_minute" name="runtime_minute" th:value="${Movielist.runtime_minute}" min="0" max="59" required>
-        </div>
+                <div class="rt-input-group">
+                    <label class="rt-input-label">SHOW_MINUTE</label>
+                    <div class="rt-input-wrapper">
+                        <input type="number" name="show_time_minute" class="rt-terminal-input" th:value="${Movielist.show_time_minute}" min="0" max="59" required>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
 
-        <!-- Cost -->
-        <div class="form-group">
-            <label for="cost">Streaming/Rental Cost ($)</label>
-            <input type="number" id="cost" name="cost" step="0.01" th:value="${Movielist.cost}" required>
-        </div>
+                <div class="rt-input-group">
+                    <label class="rt-input-label">RUN_HOUR</label>
+                    <div class="rt-input-wrapper">
+                        <input type="number" name="runtime_hour" class="rt-terminal-input" th:value="${Movielist.runtime_hour}" min="0" required>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
 
-        <!-- Description -->
-        <div class="form-group full-width">
-            <label for="description">Description</label>
-            <textarea id="description" name="description" rows="4" th:text="${Movielist.description}" required></textarea>
-        </div>
+                <div class="rt-input-group">
+                    <label class="rt-input-label">RUN_MINUTE</label>
+                    <div class="rt-input-wrapper">
+                        <input type="number" name="runtime_minute" class="rt-terminal-input" th:value="${Movielist.runtime_minute}" min="0" max="59" required>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
 
-        <div class="button-group full-width">
-            <button type="button" class="back-btn" onclick="history.back()">Cancel</button>
-            <button type="submit" class="submit-btn">Update Movie</button>
+                <div class="rt-input-group">
+                    <label class="rt-input-label">ASSIGNED_FACILITY</label>
+                    <div class="rt-input-wrapper">
+                        <select name="room" class="rt-terminal-input" required>
+                            <option th:each="room : ${Roomlist}"
+                                    th:value="${room.id}"
+                                    th:text="${room.name}"
+                                    th:selected="${Movielist.rooms.contains(room)}">
+                            </option>
+                        </select>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
+
+                <div class="rt-input-group">
+                    <label class="rt-input-label">UNIT_VAL_USD ($)</label>
+                    <div class="rt-input-wrapper">
+                        <input type="number" name="cost" step="0.01" class="rt-terminal-input" th:value="${Movielist.cost}" required>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
+
+                <div class="rt-input-group full-width">
+                    <label class="rt-input-label">SYSTEM_DESCRIPTION_LOG</label>
+                    <div class="rt-input-wrapper">
+                        <textarea name="description" class="rt-terminal-input" rows="4" th:text="${Movielist.description}" required></textarea>
+                        <div class="rt-focus-indicator"></div>
+                    </div>
+                </div>
+
+                <div class="rt-form-footer full-width">
+                    <a href="javascript:history.back()" class="rt-btn-cancel">CANCEL_OPERATION</a>
+                    <button type="submit" class="rt-btn-industrial">
+                        <span class="rt-btn-inner">COMMIT_CHANGES</span>
+                    </button>
+                </div>
+            </form>
         </div>
-    </form>
-</div>
+    </div>
+</main>
+
+<style>
+    .rt-main-content {
+        padding: 100px 20px 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .rt-terminal-module {
+        background: #111113;
+        border: 1px solid #252527;
+        width: 100%;
+        max-width: 700px;
+        box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    }
+
+    .rt-module-header {
+        background: #1a1a1c;
+        padding: 12px 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #252527;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.65rem;
+        color: #666;
+    }
+
+    .rt-header-status-light {
+        width: 8px; height: 8px;
+        background: #00ff00;
+        border-radius: 50%;
+        box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+    }
+
+    .rt-module-body { padding: 40px; }
+
+    .rt-auth-header { margin-bottom: 30px; }
+    .rt-status-tag { font-family: 'Roboto Mono', monospace; color: #666; font-size: 0.7rem; margin-bottom: 10px; }
+    .rt-status-dot { display: inline-block; width: 6px; height: 6px; background: var(--primary-red); border-radius: 50%; margin-right: 8px; }
+    .rt-terminal-title { font-size: 2.2rem; font-weight: 900; text-transform: uppercase; margin: 0; letter-spacing: -1px; }
+
+    .rt-industrial-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .full-width { grid-column: span 2; }
+
+    .rt-input-group { text-align: left; }
+    .rt-input-label { display: block; font-family: 'Roboto Mono', monospace; font-size: 0.7rem; color: #555; margin-bottom: 8px; font-weight: 700; }
+
+    .rt-input-wrapper { position: relative; }
+    .rt-terminal-input {
+        width: 100%;
+        background: #080809;
+        border: 1px solid #252527;
+        padding: 14px;
+        color: white;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.9rem;
+        box-sizing: border-box;
+    }
+
+    .rt-focus-indicator {
+        position: absolute;
+        bottom: 0; left: 50%;
+        width: 0; height: 2px;
+        background: var(--primary-red);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .rt-terminal-input:focus { outline: none; border-color: #444; }
+    .rt-terminal-input:focus ~ .rt-focus-indicator { width: 100%; left: 0; }
+
+    /* 3D BUTTONS */
+    .rt-form-footer {
+        display: flex;
+        gap: 20px;
+        margin-top: 30px;
+        align-items: center;
+    }
+
+    .rt-btn-cancel {
+        flex: 1;
+        text-align: center;
+        color: #444;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.75rem;
+        font-weight: 900;
+        text-decoration: none;
+        border: 1px solid #222;
+        padding: 15px;
+        transition: all 0.2s;
+    }
+
+    .rt-btn-cancel:hover { color: #fff; border-color: #666; }
+
+    .rt-btn-industrial {
+        flex: 2;
+        border: none;
+        cursor: pointer;
+        background: #800000;
+        padding: 0;
+        clip-path: polygon(5% 0, 100% 0, 100% 75%, 95% 100%, 0 100%, 0 25%);
+    }
+
+    .rt-btn-inner {
+        display: block;
+        padding: 15px;
+        transition: transform 0.1s ease;
+        text-align: center;
+        font-family: 'Roboto Mono', monospace;
+        font-weight: 900;
+        background: var(--primary-red);
+        color: white;
+        transform: translateY(-4px);
+    }
+
+    .rt-btn-industrial:active .rt-btn-inner { transform: translateY(0); }
+</style>
+
 </body>
 </html>
